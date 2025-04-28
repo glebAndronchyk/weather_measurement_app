@@ -1,0 +1,22 @@
+{
+  "name": "server_weather-app",
+  "prisma.schema": "./src/migration/schema.prisma",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "run": "npx tsx index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "tsx": "^4.19.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.6.0",
+    "express": "^5.1.0"
+  }
+}
