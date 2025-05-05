@@ -1,15 +1,136 @@
-datasource db {
-  provider = "postgresql"
-  url      = env("DB_URL")
-}
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
 }
 
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This table has subclasses and requires additional setup for migrations. Visit https://pris.ly/d/table-inheritance for more info.
+model Measurement {
+  id        Int                     @id @default(autoincrement())
+  device_id Int
+  timestamp DateTime                @db.Date
+  area      Unsupported("geometry")
+  Device    Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+
+  @@index([area], map: "area_index", type: Gist)
+}
+
+model TemperatureMeasurement {
+  id        Int                     @id @default(autoincrement())
+  device_id Int
+  timestamp DateTime                @db.Date
+  area      Unsupported("geometry")
+
+  temp_c    Float
+
+  Device    Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+}
+
 model Vendor {
-  id    Int     @id @default(autoincrement()) @unique
-  name  String  @unique
-  type  String
+  id     Int      @id @default(autoincrement())
+  name   String
+  type   String
+  Device Device[]
+}
+
+model Device {
+  device_type                    DEVICE_TYPE
+  date_assembled                 DateTime                         @db.Time(6)
+  features                       String[]
+  precision                      Float
+  serial_number                  Int                              @default(autoincrement())
+  id                             Int                              @unique @default(autoincrement())
+  vendor_id                      Int?
+  AirQualityMeasurement          AirQualityMeasurement[]
+  AtmosphericPressureMeasurement AtmosphericPressureMeasurement[]
+  CloudCovertMeasurement         CloudCovertMeasurement[]
+  Vendor                         Vendor?                          @relation(fields: [vendor_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "vendor_id")
+  DeviceHealthLog                DeviceHealthLog[]
+  FogLevelMeasurement            FogLevelMeasurement[]
+  Measurement                    Measurement[]
+  TemperatureMeasurement         TemperatureMeasurement[]
+  WindMeasurement                WindMeasurement[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model spatial_ref_sys {
+  srid      Int     @id
+  auth_name String? @db.VarChar(256)
+  auth_srid Int?
+  srtext    String? @db.VarChar(2048)
+  proj4text String? @db.VarChar(2048)
+}
+
+model AirQualityMeasurement {
+  id        Int                     @id
+  device_id Int
+  timestamp DateTime                @db.Date
+  area      Unsupported("geometry")
+  no2       Float?
+  so2       Float?
+  o3        Float?
+  aqi       Float?
+  unit      String
+  humidity  Float?
+  Device    Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+}
+
+model AtmosphericPressureMeasurement {
+  id        Int                     @id
+  device_id Int
+  timestamp DateTime                @db.Date
+  area      Unsupported("geometry")
+  atm       Float
+  unit      String
+  Device    Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model CloudCovertMeasurement {
+  id        Int                     @id
+  device_id Int
+  timestamp DateTime                @db.Date
+  area      Unsupported("geometry")
+  ccp       Decimal                 @db.Decimal
+  Device    Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+}
+
+model DeviceHealthLog {
+  id          Int      @id @default(autoincrement())
+  timestamp   DateTime @db.Date
+  bucket_path String
+  device_id   Int
+  Device      Device   @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+}
+
+model FogLevelMeasurement {
+  id        Int                     @id
+  device_id Int
+  timestamp DateTime                @db.Date
+  area      Unsupported("geometry")
+  density   Float
+  Device    Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+}
+
+model WindMeasurement {
+  id        Int                     @id
+  device_id Int
+  timestamp DateTime                @db.Date
+  area      Unsupported("geometry")
+  speed     Float?
+  direction String?
+  Device    Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+}
+
+enum DEVICE_TYPE {
+  AEROSTAT
+  STRATOSPHERIC
+  GROUND_STATION
+  MARINE
+  AIRCRAFT_      @map("AIRCRAFT ")
+  ORBITAL
 }

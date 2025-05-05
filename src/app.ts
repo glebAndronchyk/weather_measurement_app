@@ -1,3 +1,3 @@
-export default function app() {
-    import('./api/configure');
+export default async function app() {
+    await import('./api/index.ts');
 }
