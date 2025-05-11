@@ -12,5 +12,6 @@ export interface MeasurementQueryPayload {
     device?: number;
     dateStart?: string;
     dateEnd?: string;
+    within?: number;
     type?: EGeojsonMeasurementType;
 }

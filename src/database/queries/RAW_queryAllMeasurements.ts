@@ -10,6 +10,17 @@ const allMeasurementsQueryMapper: Parameters<typeof whereIncluded<MeasurementQue
     date: (val) => `
                 (timestamp = ${val}::timestamp)
             `,
+    within: (val, obj) => `
+                EXISTS(
+                    SELECT 1 from public."Measurement"
+                    WHERE id = gm.id
+                    AND ST_3DDWithin(
+                        area,
+                        ST_SetSRID(ST_MakePoint(${val}, ${obj.lon}, ${obj.extrusion}), 4326),
+                        ${val}
+                    )
+                )
+            `,
     lat: (val, obj) => `
                 (ST_Intersects(
                     (SELECT area from public."Measurement" where id = gm.id),

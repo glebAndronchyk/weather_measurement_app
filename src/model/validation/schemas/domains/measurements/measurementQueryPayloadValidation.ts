@@ -10,6 +10,7 @@ export const measurementQueryPayloadValidation = z.object({
     lat: decimalString.optional(),
     lon: decimalString.optional(),
     extrusion: decimalString.optional(),
+    within: decimalString.optional(),
     dateStart: z.string().optional(),
     dateEnd: z.string().optional(),
 });
