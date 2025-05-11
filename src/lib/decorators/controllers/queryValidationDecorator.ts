@@ -17,7 +17,10 @@ export const queryValidationDecorator = (callback: RequestHandler<{}, {}, {}, {}
 
         Object.defineProperty(req, 'query', {
             get(): any {
-                return data;
+                return {
+                    ...(data as object),
+                    _validated: true,
+                };
             }
         });
         return callback(req, res, next);

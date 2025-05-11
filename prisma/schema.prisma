@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["typedSql", "views"]
 }
 
 datasource db {
@@ -21,12 +22,10 @@ model Measurement {
 
 model TemperatureMeasurement {
   id        Int                     @id @default(autoincrement())
+  temp_c    Float
   device_id Int
   timestamp DateTime                @db.Date
   area      Unsupported("geometry")
-
-  temp_c    Float
-
   Device    Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 }
 
@@ -39,12 +38,12 @@ model Vendor {
 
 model Device {
   device_type                    DEVICE_TYPE
-  date_assembled                 DateTime                         @db.Time(6)
   features                       String[]
   precision                      Float
   serial_number                  Int                              @default(autoincrement())
-  id                             Int                              @unique @default(autoincrement())
+  id                             Int                              @id @unique @default(autoincrement())
   vendor_id                      Int?
+  date_assembled                 DateTime                         @db.Date
   AirQualityMeasurement          AirQualityMeasurement[]
   AtmosphericPressureMeasurement AtmosphericPressureMeasurement[]
   CloudCovertMeasurement         CloudCovertMeasurement[]
@@ -124,6 +123,94 @@ model WindMeasurement {
   speed     Float?
   direction String?
   Device    Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+}
+
+view geojson_measurement {
+  id        Int       @unique
+  device_id Int?
+  timestamp DateTime? @db.Date
+  area      String?
+}
+
+view geojson_temperaturemeasurement {
+  id        Int       @unique
+  device_id Int?
+  timestamp DateTime? @db.Date
+  temp_c    Float?
+  area      String?
+}
+
+view geojson_foglevelmeasurement {
+  id        Int       @unique
+  device_id Int?
+  timestamp DateTime? @db.Date
+  density   Float?
+  area      String?
+}
+
+view geojson_windmeasurement {
+  id        Int       @unique
+  device_id Int?
+  timestamp DateTime? @db.Date
+  speed     Float?
+  direction String?
+  area      String?
+}
+
+view geojson_airqualitymeasurement {
+  id        Int       @unique
+  device_id Int?
+  timestamp DateTime? @db.Date
+  no2       Float?
+  so2       Float?
+  o3        Float?
+  aqi       Float?
+  unit      String?
+  humidity  Float?
+  area      String?
+}
+
+view geojson_atmosphericpressuremeasurement {
+  id        Int       @unique
+  device_id Int?
+  timestamp DateTime? @db.Date
+  unit      String?
+  atm       Float?
+  area      String?
+}
+
+view geojson_cloudcovertmeasurement {
+  id        Int       @unique
+  device_id Int?
+  timestamp DateTime? @db.Date
+  ccp       Decimal?  @db.Decimal
+  area      String?
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view geography_columns {
+  f_table_catalog    Unsupported("name")?
+  f_table_schema     Unsupported("name")?
+  f_table_name       Unsupported("name")?
+  f_geography_column Unsupported("name")?
+  coord_dimension    Int?
+  srid               Int?
+  type               String?
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view geometry_columns {
+  f_table_catalog   String?              @db.VarChar(256)
+  f_table_schema    Unsupported("name")?
+  f_table_name      Unsupported("name")?
+  f_geometry_column Unsupported("name")?
+  coord_dimension   Int?
+  srid              Int?
+  type              String?              @db.VarChar(30)
+
+  @@ignore
 }
 
 enum DEVICE_TYPE {
