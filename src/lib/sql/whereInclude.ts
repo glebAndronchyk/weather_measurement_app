@@ -1,4 +1,6 @@
-export const whereIncluded = <T extends Record<string, any>>(obj: T, mapper: Partial<Record<keyof T, (key: T[keyof T], obj: T) => string>>) => {
+export const whereIncluded = <T extends Record<string, any>>(obj: T, mapper: Partial<{
+    [K in keyof T]: (val: T[K], obj: T) => string;
+}>) => {
     const filteredEntries = Object.entries(obj).filter(([_, value]) => ![undefined, null].includes(value) && value !== '');
     if (!filteredEntries.length) {
         return '';
