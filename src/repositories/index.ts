@@ -1,6 +1,6 @@
 import {VendorsRepository} from "./Vendors/index.js";
 import {prisma} from "./connections.js";
-import {MeasurementsBaseRepository} from "./Measurements/index.ts";
+import {MeasurementsBaseRepository} from "./measurements/index.ts";
 
 const repositories = {
     vendors: new VendorsRepository(prisma),

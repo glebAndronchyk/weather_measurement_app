@@ -1,9 +1,9 @@
 import {pagination, whereIncluded} from "../../lib/sql/index.js";
 import {
-    MeasurementQueryPayloadPaginatedWithDBTableType
+    MeasurementQueryPayloadSupertype
 } from "../../model/domain/measurements/MeasurementQueryPayloadPaginated.js";
 
-const allMeasurementsQueryMapper: Parameters<typeof whereIncluded<MeasurementQueryPayloadPaginatedWithDBTableType>>[1] = {
+const allMeasurementsQueryMapper: Parameters<typeof whereIncluded<MeasurementQueryPayloadSupertype>>[1] = {
     device: (val) => `
                 (device_id = ${val})
             `,
@@ -22,9 +22,18 @@ const allMeasurementsQueryMapper: Parameters<typeof whereIncluded<MeasurementQue
                 )
             `,
     lat: (val, obj) => `
-                (ST_Intersects(
+                (ST_3DIntersects(
                     (SELECT area from public."Measurement" where id = gm.id),
                     ST_SetSRID(ST_MakePoint(${val}, ${obj.lon}, ${obj.extrusion}), 4326)
+                ))
+            `,
+    ltc: (val, { rbc }) => `
+                (ST_3DIntersects(
+                    ST_3DMakeBox(
+                        ST_SetSRID(ST_MakePoint(${val[0]}, ${val[1]}, ${val[2]}), 4326),
+                        ST_SetSRID(ST_MakePoint(${rbc[0]}, ${rbc[1]}, ${rbc[2]}), 4326)
+                    ),
+                    (SELECT area from public."Measurement" where id = gm.id)
                 ))
             `,
     dateStart: (val, obj) => `
@@ -32,7 +41,7 @@ const allMeasurementsQueryMapper: Parameters<typeof whereIncluded<MeasurementQue
             `
 }
 
-export const RAW_queryAllMeasurements = (obj: MeasurementQueryPayloadPaginatedWithDBTableType) => `
+export const RAW_queryAllMeasurements = (obj: MeasurementQueryPayloadSupertype) => `
         SELECT *
         FROM public."${obj.type}" gm
         ${whereIncluded(obj, allMeasurementsQueryMapper)}
