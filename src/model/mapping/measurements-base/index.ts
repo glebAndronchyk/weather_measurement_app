@@ -5,11 +5,9 @@ import {
 } from "../../domain/measurements/MeasurementQueryPayloadPaginated.js";
 import {EGeojsonMeasurementType} from "../../../database/enums/index.js";
 
-const mapSingleGeoJsonMeasurementToDTO = (obj: GeojsonMeasurement) => ({
-    ...obj,
-    date: obj.timestamp,
-    deviceId: obj.device_id,
-    area: new GeoJson(obj.area).singleFeature(),
+const mapSingleGeoJsonMeasurementToDTO = ({ area, ...wontRemap }: GeojsonMeasurement) => ({
+    ...wontRemap,
+    area: new GeoJson(area).singleFeature(),
 });
 
 export const mapSingleMeasurementToHaveDBTableType = (obj: MeasurementQueryPayloadSupertype): MeasurementQueryPayloadSupertype => ({

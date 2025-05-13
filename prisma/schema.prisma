@@ -11,22 +11,24 @@ datasource db {
 
 /// This table has subclasses and requires additional setup for migrations. Visit https://pris.ly/d/table-inheritance for more info.
 model Measurement {
-  id        Int                     @id @default(autoincrement())
-  device_id Int
-  timestamp DateTime                @db.Date
-  area      Unsupported("geometry")
-  Device    Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+  id               Int                     @id @default(autoincrement())
+  device_id        Int
+  timestamp        DateTime                @db.Date
+  area             Unsupported("geometry")
+  measurement_type MEASUREMENT_TYPE?
+  Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 
   @@index([area], map: "area_index", type: Gist)
 }
 
 model TemperatureMeasurement {
-  id        Int                     @id @default(autoincrement())
-  temp_c    Float
-  device_id Int
-  timestamp DateTime                @db.Date
-  area      Unsupported("geometry")
-  Device    Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+  id               Int                     @id @default(autoincrement())
+  temp_c           Float
+  device_id        Int
+  timestamp        DateTime                @db.Date
+  area             Unsupported("geometry")
+  measurement_type MEASUREMENT_TYPE?       @default(TEMPERATURE_MEASUREMENT)
+  Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 }
 
 model Vendor {
@@ -65,37 +67,40 @@ model spatial_ref_sys {
 }
 
 model AirQualityMeasurement {
-  id        Int                     @id
-  device_id Int
-  timestamp DateTime                @db.Date
-  area      Unsupported("geometry")
-  no2       Float?
-  so2       Float?
-  o3        Float?
-  aqi       Float?
-  unit      String
-  humidity  Float?
-  Device    Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+  id               Int                     @id
+  device_id        Int
+  timestamp        DateTime                @db.Date
+  area             Unsupported("geometry")
+  no2              Float?
+  so2              Float?
+  o3               Float?
+  aqi              Float?
+  unit             String
+  humidity         Float?
+  measurement_type MEASUREMENT_TYPE?       @default(AIR_QUALITY_MEASUREMENT)
+  Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 }
 
 model AtmosphericPressureMeasurement {
-  id        Int                     @id
-  device_id Int
-  timestamp DateTime                @db.Date
-  area      Unsupported("geometry")
-  atm       Float
-  unit      String
-  Device    Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+  id               Int                     @id
+  device_id        Int
+  timestamp        DateTime                @db.Date
+  area             Unsupported("geometry")
+  atm              Float
+  unit             String
+  measurement_type MEASUREMENT_TYPE?       @default(ATMOSPHERIC_PRESSURE_MEASUREMENT)
+  Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model CloudCovertMeasurement {
-  id        Int                     @id
-  device_id Int
-  timestamp DateTime                @db.Date
-  area      Unsupported("geometry")
-  ccp       Decimal                 @db.Decimal
-  Device    Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+  id               Int                     @id
+  device_id        Int
+  timestamp        DateTime                @db.Date
+  area             Unsupported("geometry")
+  ccp              Decimal                 @db.Decimal
+  measurement_type MEASUREMENT_TYPE?       @default(CLOUD_COVERT_MEASUREMENT)
+  Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 }
 
 model DeviceHealthLog {
@@ -107,84 +112,93 @@ model DeviceHealthLog {
 }
 
 model FogLevelMeasurement {
-  id        Int                     @id
-  device_id Int
-  timestamp DateTime                @db.Date
-  area      Unsupported("geometry")
-  density   Float
-  Device    Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+  id               Int                     @id
+  device_id        Int
+  timestamp        DateTime                @db.Date
+  area             Unsupported("geometry")
+  density          Float
+  measurement_type MEASUREMENT_TYPE?       @default(FOG_LEVEL_MEASUREMENT)
+  Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 }
 
 model WindMeasurement {
-  id        Int                     @id
-  device_id Int
-  timestamp DateTime                @db.Date
-  area      Unsupported("geometry")
-  speed     Float?
-  direction String?
-  Device    Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+  id               Int                     @id
+  device_id        Int
+  timestamp        DateTime                @db.Date
+  area             Unsupported("geometry")
+  speed            Float?
+  direction        String?
+  measurement_type MEASUREMENT_TYPE?       @default(WIND_MEASUREMENT)
+  Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 }
 
 view geojson_measurement {
-  id        Int       @unique
-  device_id Int?
-  timestamp DateTime? @db.Date
-  area      String?
+  measurement_type MEASUREMENT_TYPE?
+  id               Int               @unique
+  device_id        Int?
+  timestamp        DateTime?         @db.Date
+  area             String?
 }
 
 view geojson_temperaturemeasurement {
-  id        Int       @unique
-  device_id Int?
-  timestamp DateTime? @db.Date
-  temp_c    Float?
-  area      String?
+  measurement_type MEASUREMENT_TYPE?
+  id               Int               @unique
+  device_id        Int?
+  timestamp        DateTime?         @db.Date
+  temp_c           Float?
+  area             String?
 }
 
 view geojson_foglevelmeasurement {
-  id        Int       @unique
-  device_id Int?
-  timestamp DateTime? @db.Date
-  density   Float?
-  area      String?
+  measurement_type MEASUREMENT_TYPE?
+  id               Int               @unique
+  device_id        Int?
+  timestamp        DateTime?         @db.Date
+  density          Float?
+  area             String?
 }
 
 view geojson_windmeasurement {
-  id        Int       @unique
-  device_id Int?
-  timestamp DateTime? @db.Date
-  speed     Float?
-  direction String?
-  area      String?
+  measurement_type MEASUREMENT_TYPE?
+  id               Int               @unique
+  device_id        Int?
+  timestamp        DateTime?         @db.Date
+  speed            Float?
+  direction        String?
+  area             String?
 }
 
 view geojson_airqualitymeasurement {
-  id        Int       @unique
-  device_id Int?
-  timestamp DateTime? @db.Date
-  no2       Float?
-  so2       Float?
-  o3        Float?
-  aqi       Float?
-  unit      String?
-  humidity  Float?
-  area      String?
+  measurement_type MEASUREMENT_TYPE?
+  id               Int               @unique
+  device_id        Int?
+  timestamp        DateTime?         @db.Date
+  no2              Float?
+  so2              Float?
+  o3               Float?
+  aqi              Float?
+  unit             String?
+  humidity         Float?
+  area             String?
 }
 
 view geojson_atmosphericpressuremeasurement {
-  id        Int       @unique
-  device_id Int?
-  timestamp DateTime? @db.Date
-  unit      String?
-  atm       Float?
-  area      String?
+  measurement_type MEASUREMENT_TYPE?
+  id               Int               @unique
+  device_id        Int?
+  timestamp        DateTime?         @db.Date
+  unit             String?
+  atm              Float?
+  area             String?
 }
 
 view geojson_cloudcovertmeasurement {
-  id        Int       @unique
-  device_id Int?
-  timestamp DateTime? @db.Date
-  ccp       Decimal?  @db.Decimal
-  area      String?
+  measurement_type MEASUREMENT_TYPE?
+  id               Int               @unique
+  device_id        Int?
+  timestamp        DateTime?         @db.Date
+  ccp              Decimal?          @db.Decimal
+  area             String?
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
@@ -220,4 +234,14 @@ enum DEVICE_TYPE {
   MARINE
   AIRCRAFT_      @map("AIRCRAFT ")
   ORBITAL
+}
+
+enum MEASUREMENT_TYPE {
+  MEASUREMENT
+  TEMPERATURE_MEASUREMENT
+  FOG_LEVEL_MEASUREMENT
+  WIND_MEASUREMENT
+  AIR_QUALITY_MEASUREMENT
+  ATMOSPHERIC_PRESSURE_MEASUREMENT
+  CLOUD_COVERT_MEASUREMENT
 }

@@ -1,8 +1,8 @@
 export class GeoJson {
     private readonly _data: string;
 
-    constructor(data: string) {
-        this._data = data;
+    constructor(jsonString: string) {
+        this._data = jsonString;
     }
 
     singleFeature() {
