@@ -1,7 +1,7 @@
 import {z} from "zod";
-import {decimalString, digitString} from "../../primitives/index.js";
+import {decimalString, digitString, inlineArray} from "../../primitives/index.js";
 import {EGeojsonMeasurementType} from "../../../../../database/enums/index.js";
-
+import {UNITS} from "../../../../../generated/prisma/enums.js";
 
 export const measurementQueryPayloadValidation = z.object({
     type: z.nativeEnum(EGeojsonMeasurementType).optional(),
@@ -13,6 +13,7 @@ export const measurementQueryPayloadValidation = z.object({
     within: decimalString.optional(),
     dateStart: z.string().optional(),
     dateEnd: z.string().optional(),
+    units: inlineArray(z.array(z.enum(Object.values(UNITS)))).optional(),
 });
 
 // todo: apply refine validation

@@ -4,16 +4,19 @@ import {
 } from "../../model/domain/measurements/MeasurementQueryPayloadPaginated.js";
 
 const allMeasurementsQueryMapper: Parameters<typeof whereIncluded<MeasurementQueryPayloadSupertype>>[1] = {
+    units: (val, _, initialTableAlias) => `
+                (${initialTableAlias}.unit in (${val.map(entry => `'${entry}'`).join()}))
+            `,
     device: (val) => `
                 (device_id = ${val})
             `,
     date: (val) => `
                 (timestamp = ${val}::timestamp)
             `,
-    within: (val, obj) => `
+    within: (val, obj, initialTableAlias) => `
                 EXISTS(
                     SELECT 1 from public."Measurement"
-                    WHERE id = gm.id
+                    WHERE id = ${initialTableAlias}.id
                     AND ST_3DDWithin(
                         area,
                         ST_SetSRID(ST_MakePoint(${val}, ${obj.lon}, ${obj.extrusion}), 4326),
@@ -21,19 +24,19 @@ const allMeasurementsQueryMapper: Parameters<typeof whereIncluded<MeasurementQue
                     )
                 )
             `,
-    lat: (val, obj) => `
+    lat: (val, obj, initialTableAlias) => `
                 (ST_3DIntersects(
-                    (SELECT area from public."Measurement" where id = gm.id),
+                    (SELECT area from public."Measurement" where id = ${initialTableAlias}.id),
                     ST_SetSRID(ST_MakePoint(${val}, ${obj.lon}, ${obj.extrusion}), 4326)
                 ))
             `,
-    ltc: (val, { rbc }) => `
+    ltc: (val, { rbc }, initialTableAlias) => `
                 (ST_3DIntersects(
                     ST_3DMakeBox(
                         ST_SetSRID(ST_MakePoint(${val[0]}, ${val[1]}, ${val[2]}), 4326),
                         ST_SetSRID(ST_MakePoint(${rbc[0]}, ${rbc[1]}, ${rbc[2]}), 4326)
                     ),
-                    (SELECT area from public."Measurement" where id = gm.id)
+                    (SELECT area from public."Measurement" where id = ${initialTableAlias}.id)
                 ))
             `,
     dateStart: (val, obj) => `
@@ -41,9 +44,9 @@ const allMeasurementsQueryMapper: Parameters<typeof whereIncluded<MeasurementQue
             `
 }
 
-export const RAW_queryAllMeasurements = (obj: MeasurementQueryPayloadSupertype) => `
+export const RAW_queryAllMeasurements = (obj: MeasurementQueryPayloadSupertype, initialTableAlias = 'measurement') => `
         SELECT *
-        FROM public."${obj.type}" gm
-        ${whereIncluded(obj, allMeasurementsQueryMapper)}
+        FROM public."${obj.type}" ${initialTableAlias}
+        ${whereIncluded(obj, allMeasurementsQueryMapper, initialTableAlias)}
         ${pagination(obj)};
 `

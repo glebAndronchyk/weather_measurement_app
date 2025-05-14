@@ -16,6 +16,7 @@ model Measurement {
   timestamp        DateTime                @db.Date
   area             Unsupported("geometry")
   measurement_type MEASUREMENT_TYPE?
+  unit             UNITS?
   Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 
   @@index([area], map: "area_index", type: Gist)
@@ -28,6 +29,7 @@ model TemperatureMeasurement {
   timestamp        DateTime                @db.Date
   area             Unsupported("geometry")
   measurement_type MEASUREMENT_TYPE?       @default(TEMPERATURE_MEASUREMENT)
+  unit             UNITS?
   Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 }
 
@@ -75,9 +77,9 @@ model AirQualityMeasurement {
   so2              Float?
   o3               Float?
   aqi              Float?
-  unit             String
   humidity         Float?
   measurement_type MEASUREMENT_TYPE?       @default(AIR_QUALITY_MEASUREMENT)
+  unit             UNITS?
   Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 }
 
@@ -87,8 +89,8 @@ model AtmosphericPressureMeasurement {
   timestamp        DateTime                @db.Date
   area             Unsupported("geometry")
   atm              Float
-  unit             String
   measurement_type MEASUREMENT_TYPE?       @default(ATMOSPHERIC_PRESSURE_MEASUREMENT)
+  unit             UNITS?
   Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 }
 
@@ -100,6 +102,7 @@ model CloudCovertMeasurement {
   area             Unsupported("geometry")
   ccp              Decimal                 @db.Decimal
   measurement_type MEASUREMENT_TYPE?       @default(CLOUD_COVERT_MEASUREMENT)
+  unit             UNITS?
   Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 }
 
@@ -118,6 +121,7 @@ model FogLevelMeasurement {
   area             Unsupported("geometry")
   density          Float
   measurement_type MEASUREMENT_TYPE?       @default(FOG_LEVEL_MEASUREMENT)
+  unit             UNITS?
   Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 }
 
@@ -129,6 +133,7 @@ model WindMeasurement {
   speed            Float?
   direction        String?
   measurement_type MEASUREMENT_TYPE?       @default(WIND_MEASUREMENT)
+  unit             UNITS?
   Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 }
 
@@ -177,9 +182,9 @@ view geojson_airqualitymeasurement {
   so2              Float?
   o3               Float?
   aqi              Float?
-  unit             String?
   humidity         Float?
   area             String?
+  unit             UNITS?
 }
 
 view geojson_atmosphericpressuremeasurement {
@@ -187,9 +192,9 @@ view geojson_atmosphericpressuremeasurement {
   id               Int               @unique
   device_id        Int?
   timestamp        DateTime?         @db.Date
-  unit             String?
   atm              Float?
   area             String?
+  unit             UNITS?
 }
 
 view geojson_cloudcovertmeasurement {
@@ -244,4 +249,10 @@ enum MEASUREMENT_TYPE {
   AIR_QUALITY_MEASUREMENT
   ATMOSPHERIC_PRESSURE_MEASUREMENT
   CLOUD_COVERT_MEASUREMENT
+}
+
+enum UNITS {
+  CELCIUS
+  FAHRENHEIT
+  MPS
 }
