@@ -13,21 +13,21 @@ const allMeasurementsQueryMapper: Parameters<typeof whereIncluded<MeasurementQue
     date: (val) => `
                 (timestamp = ${val}::timestamp)
             `,
-    within: (val, obj, initialTableAlias) => `
+    within: (val, { coordinates }, initialTableAlias) => `
                 EXISTS(
                     SELECT 1 from public."Measurement"
                     WHERE id = ${initialTableAlias}.id
                     AND ST_3DDWithin(
                         area,
-                        ST_SetSRID(ST_MakePoint(${val}, ${obj.lon}, ${obj.extrusion}), 4326),
+                        ST_SetSRID(ST_MakePoint(${coordinates[0]}, ${coordinates[1]}, ${coordinates[2]}), 4326),
                         ${val}
                     )
                 )
             `,
-    lat: (val, obj, initialTableAlias) => `
+    coordinates: (val, _, initialTableAlias) => `
                 (ST_3DIntersects(
                     (SELECT area from public."Measurement" where id = ${initialTableAlias}.id),
-                    ST_SetSRID(ST_MakePoint(${val}, ${obj.lon}, ${obj.extrusion}), 4326)
+                    ST_SetSRID(ST_MakePoint(${val[0]}, ${val[1]}, ${val[2]}), 4326)
                 ))
             `,
     ltc: (val, { rbc }, initialTableAlias) => `

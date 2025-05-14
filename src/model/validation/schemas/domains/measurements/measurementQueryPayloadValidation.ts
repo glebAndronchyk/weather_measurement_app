@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {decimalString, digitString, inlineArray} from "../../primitives/index.js";
+import {coordinatesTuple, decimalString, digitString, inlineArray} from "../../primitives/index.js";
 import {EGeojsonMeasurementType} from "../../../../../database/enums/index.js";
 import {UNITS} from "../../../../../generated/prisma/enums.js";
 
@@ -7,9 +7,7 @@ export const measurementQueryPayloadValidation = z.object({
     type: z.nativeEnum(EGeojsonMeasurementType).optional(),
     date: z.string().optional(),
     device: digitString.optional(),
-    lat: decimalString.optional(),
-    lon: decimalString.optional(),
-    extrusion: decimalString.optional(),
+    coordinates: inlineArray(coordinatesTuple),
     within: decimalString.optional(),
     dateStart: z.string().optional(),
     dateEnd: z.string().optional(),

@@ -1,13 +1,11 @@
 import {z} from "zod";
 import {measurementQueryPayloadValidation} from "./measurementQueryPayloadValidation.js";
-import {coordinatesTuple} from "../../primitives/index.js";
+import {coordinatesTuple, inlineArray} from "../../primitives/index.js";
 
 export const measurementQueryPayloadGeographyValidation = measurementQueryPayloadValidation.omit({
-    lat: true,
-    lon: true,
-    extrusion: true,
+    coordinates: true,
     within: true,
 }).merge(z.object({
-    ltc: coordinatesTuple,
-    rbc: coordinatesTuple,
+    ltc: inlineArray(coordinatesTuple),
+    rbc: inlineArray(coordinatesTuple),
 }))

@@ -1,5 +1,6 @@
 import {EGeojsonMeasurementType} from "../../../database/enums/index.js";
 import { type UNITS } from "../../../generated/prisma/enums.js";
+import {Coordinates} from "../../tuples/Coordinates.js";
 
 export interface MeasurementQueryPayloadWithDBTableType extends Omit<MeasurementQueryPayload, 'type'> {
     type: string;
@@ -7,9 +8,7 @@ export interface MeasurementQueryPayloadWithDBTableType extends Omit<Measurement
 
 export interface MeasurementQueryPayload {
     date?: string;
-    lat?: number;
-    lon?: number;
-    extrusion?: number;
+    coordinates: Coordinates;
     device?: number;
     dateStart?: string;
     dateEnd?: string;
