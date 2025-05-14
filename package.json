@@ -7,7 +7,9 @@
   "scripts": {
     "db-link": "npx prisma db pull",
     "gen": "npx prisma generate",
-    "run": "npx tsx --env-file=.env index.ts"
+    "regenerate-schema": "npm run db-link && npx rimraf ./src/generated/prisma && npm run gen",
+    "run": "npx tsx --env-file=.env index.ts",
+    "check-types": "npx tsc --noEmit"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +20,7 @@
     "@types/express": "^5.0.1",
     "@types/wellknown": "^0.5.8",
     "prisma": "^6.7.0",
+    "rimraf": "^6.0.1",
     "tsx": "^4.19.3"
   },
   "dependencies": {

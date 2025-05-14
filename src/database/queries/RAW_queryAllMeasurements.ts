@@ -40,13 +40,36 @@ const allMeasurementsQueryMapper: Parameters<typeof whereIncluded<MeasurementQue
                 ))
             `,
     dateStart: (val, obj) => `
-                (timestamp::date >= '${val}'::date) AND (timestamp <= '${obj.dateEnd}'::date)
+                (timestamp::date BETWEEN '${val}'::date AND '${obj.dateEnd}'::date)
             `
 }
 
-export const RAW_queryAllMeasurements = (obj: MeasurementQueryPayloadSupertype, initialTableAlias = 'measurement') => `
-        SELECT *
-        FROM public."${obj.type}" ${initialTableAlias}
-        ${whereIncluded(obj, allMeasurementsQueryMapper, initialTableAlias)}
-        ${pagination(obj)};
-`
+export const RAW_queryAllMeasurements = (obj: MeasurementQueryPayloadSupertype, initialTableAlias = 'measurement') => {
+    const paginationQuery = pagination(obj);
+    const whereQuery = whereIncluded(obj, allMeasurementsQueryMapper, initialTableAlias);
+
+    return `
+        SELECT 
+            json_build_object(
+                'items', COALESCE(items_array, '[]'::jsonb),
+                'totalItems', total_items
+            ) as result
+        FROM 
+            (
+                SELECT
+                    count(*) as total_items
+                FROM public."${obj.type}" ${initialTableAlias}
+            ) 
+                CROSS JOIN 
+            (
+                SELECT 
+                    jsonb_agg(sub.*) as items_array
+                FROM (
+                    SELECT * 
+                        FROM public."${obj.type}" ${initialTableAlias}
+                        ${whereQuery}
+                        ${paginationQuery}
+                ) as sub
+            )
+    `
+}

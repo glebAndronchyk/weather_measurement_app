@@ -45,8 +45,8 @@ export class MeasurementsBaseController extends ControllerBase<MeasurementsBaseC
             const measurements = await this._measurementsBaseRepository.getMeasurements(
                 this._mapper.mapSingleMeasurementToHaveDBTableType(query)
             );
-            const mappedMeasurements = this._mapper.mapGeoJsonMeasurementsToDTO(measurements);
-            const response = new BaseResponse().setData(mappedMeasurements).toDTO();
+            const remappedMeasurements = this._mapper.mapAllMeasurementsResult(measurements);
+            const response = new BaseResponse().setData(remappedMeasurements).toDTO();
 
             res.status(EStatusCode.SUCCESS).json(response);
         };
@@ -60,8 +60,8 @@ export class MeasurementsBaseController extends ControllerBase<MeasurementsBaseC
             const measurements = await this._measurementsBaseRepository.getMeasurements(
                 this._mapper.mapSingleMeasurementToHaveDBTableType(query)
             );
-            const mappedMeasurements = this._mapper.mapGeoJsonMeasurementsToDTO(measurements);
-            const response = new BaseResponse().setData(mappedMeasurements).toDTO();
+            const remappedMeasurements = this._mapper.mapAllMeasurementsResult(measurements);
+            const response = new BaseResponse().setData(remappedMeasurements).toDTO();
 
             res.status(EStatusCode.SUCCESS).json(response);
         };

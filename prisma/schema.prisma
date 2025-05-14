@@ -24,7 +24,7 @@ model Measurement {
 
 model TemperatureMeasurement {
   id               Int                     @id @default(autoincrement())
-  temp_c           Float
+  temperature      Float
   device_id        Int
   timestamp        DateTime                @db.Date
   area             Unsupported("geometry")
@@ -142,7 +142,8 @@ view geojson_measurement {
   id               Int               @unique
   device_id        Int?
   timestamp        DateTime?         @db.Date
-  area             String?
+  area             Json?
+  unit             UNITS?
 }
 
 view geojson_temperaturemeasurement {
@@ -151,7 +152,8 @@ view geojson_temperaturemeasurement {
   device_id        Int?
   timestamp        DateTime?         @db.Date
   temp_c           Float?
-  area             String?
+  area             Json?
+  unit             UNITS?
 }
 
 view geojson_foglevelmeasurement {
@@ -160,7 +162,8 @@ view geojson_foglevelmeasurement {
   device_id        Int?
   timestamp        DateTime?         @db.Date
   density          Float?
-  area             String?
+  area             Json?
+  unit             UNITS?
 }
 
 view geojson_windmeasurement {
@@ -170,7 +173,8 @@ view geojson_windmeasurement {
   timestamp        DateTime?         @db.Date
   speed            Float?
   direction        String?
-  area             String?
+  area             Json?
+  unit             UNITS?
 }
 
 view geojson_airqualitymeasurement {
@@ -183,7 +187,7 @@ view geojson_airqualitymeasurement {
   o3               Float?
   aqi              Float?
   humidity         Float?
-  area             String?
+  area             Json?
   unit             UNITS?
 }
 
@@ -193,7 +197,7 @@ view geojson_atmosphericpressuremeasurement {
   device_id        Int?
   timestamp        DateTime?         @db.Date
   atm              Float?
-  area             String?
+  area             Json?
   unit             UNITS?
 }
 
@@ -203,7 +207,8 @@ view geojson_cloudcovertmeasurement {
   device_id        Int?
   timestamp        DateTime?         @db.Date
   ccp              Decimal?          @db.Decimal
-  area             String?
+  area             Json?
+  unit             UNITS?
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.

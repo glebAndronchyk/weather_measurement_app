@@ -1,10 +1,10 @@
 import {
-    mapGeoJsonMeasurementsToDTO,
-    mapSingleMeasurementToHaveDBTableType
+    mapSingleMeasurementToHaveDBTableType,
+    mapAllMeasurementsResult
 } from "../../../../model/mapping/measurements-base/index.js";
 
 export const measurementsBaseControllerMapper = {
-    mapGeoJsonMeasurementsToDTO,
+    mapAllMeasurementsResult,
     mapSingleMeasurementToHaveDBTableType,
 } as const;
 
