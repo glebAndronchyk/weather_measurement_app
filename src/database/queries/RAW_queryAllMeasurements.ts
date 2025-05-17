@@ -1,4 +1,4 @@
-import {pagination, whereIncluded} from "../../lib/sql/index.js";
+import {pagination, whereIncluded, areaIntersectionQuery} from "../../lib/sql/index.js";
 import {
     MeasurementQueryPayloadSupertype
 } from "../../model/domain/measurements/MeasurementQueryPayloadPaginated.js";
@@ -30,15 +30,16 @@ const allMeasurementsQueryMapper: Parameters<typeof whereIncluded<MeasurementQue
                     ST_SetSRID(ST_MakePoint(${val[0]}, ${val[1]}, ${val[2]}), 4326)
                 ))
             `,
-    ltc: (val, { rbc }, initialTableAlias) => `
-                (ST_3DIntersects(
-                    ST_3DMakeBox(
-                        ST_SetSRID(ST_MakePoint(${val[0]}, ${val[1]}, ${val[2]}), 4326),
-                        ST_SetSRID(ST_MakePoint(${rbc[0]}, ${rbc[1]}, ${rbc[2]}), 4326)
-                    ),
-                    (SELECT area from public."Measurement" where id = ${initialTableAlias}.id)
-                ))
-            `,
+    ltc: (val, { rbc }, initialTableAlias) =>
+        areaIntersectionQuery(
+            val,
+            rbc,
+            `(
+                SELECT area
+                from public."Measurement"
+                where id = ${initialTableAlias}.id
+            )`
+        ),
     dateStart: (val, obj) => `
                 (timestamp::date BETWEEN '${val}'::date AND '${obj.dateEnd}'::date)
             `

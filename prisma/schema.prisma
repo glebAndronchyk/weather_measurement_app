@@ -137,6 +137,13 @@ model WindMeasurement {
   Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 }
 
+model Location {
+  id       Int                     @id @default(autoincrement())
+  type     String
+  metadata Json
+  point    Unsupported("geometry")
+}
+
 view geojson_measurement {
   measurement_type MEASUREMENT_TYPE?
   id               Int               @unique
@@ -235,6 +242,14 @@ view geometry_columns {
   type              String?              @db.VarChar(30)
 
   @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view geojson_location {
+  id       Int     @id
+  type     String?
+  metadata Json?
+  point    Json?
 }
 
 enum DEVICE_TYPE {

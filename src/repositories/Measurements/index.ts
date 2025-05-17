@@ -1,1 +1,1 @@
-export * from './MeasurementsBaseRepository.ts';
+export { MeasurementsBaseRepository } from './MeasurementsBaseRepository.ts';

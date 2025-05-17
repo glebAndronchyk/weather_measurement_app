@@ -1,0 +1,45 @@
+import {ControllerBase} from "../../../model/controllers/ControllerBase.js";
+import {RequestHandler} from "express";
+import {internalServerErrorDecorator} from "../../../lib/decorators/controllers/internalServerErrorDecorator.js";
+import {LocationsRepository} from "../../../repositories/locations/index.js";
+import repositories from "../../../repositories/index.js";
+import {LocationsFilteringQueryPayload} from "../../../model/domain/locations/LocationsFilteringQueryPayload.js";
+import {BaseResponse} from "../../../model/controllers/errors/index.js";
+import {EStatusCode} from "../../../model/enums/index.js";
+import {queryValidationDecorator} from "../../../lib/decorators/controllers/queryValidationDecorator.js";
+import {locationsQueryPayloadValidation} from "../../../model/validation/schemas/domains/locations/index.js";
+
+export class LocationsController extends ControllerBase<never> {
+    private locationsRepository: LocationsRepository;
+
+    constructor(baseUrl: string, mapper: never, locationsRepository: LocationsRepository) {
+        super(baseUrl, mapper);
+        this.locationsRepository = locationsRepository;
+    }
+
+    registerHandlers = () => {
+        this._GET();
+    }
+
+    getBaseUrl = () => {
+        return this._base;
+    }
+
+    getRouter = () => {
+        return this._router;
+    }
+
+    _GET() {
+        const query: RequestHandler<{}, {}, {}, LocationsFilteringQueryPayload> = async (req, res) => {
+            const query = req.query;
+            const locations = await this.locationsRepository.getAllLocations(query);
+            const response = new BaseResponse().setData(locations).toDTO();
+
+            res.status(EStatusCode.SUCCESS).json(response);
+        };
+
+        this._router.get('/', internalServerErrorDecorator(queryValidationDecorator(query, locationsQueryPayloadValidation)));
+    }
+}
+
+export const locationsController = new LocationsController("/locations", {} as never, repositories.locations)

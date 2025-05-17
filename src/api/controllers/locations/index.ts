@@ -1,0 +1,1 @@
+export { locationsController } from './LocationsController.ts';
