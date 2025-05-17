@@ -18,3 +18,6 @@ create or replace view geojson_AtmosphericPressureMeasurement as
 
 create or replace view geojson_CloudCovertMeasurement as
 	select  m.measurement_type, m.id, m.device_id, m.timestamp, m.ccp, ST_AsGeoJSON(area)::jsonb as area, m.unit from public."CloudCovertMeasurement" m;
+
+create or replace view geojson_Location as
+select  l.id, l.type, l.metadata, ST_AsGeoJSON(point)::jsonb as point from public."Location" l;
