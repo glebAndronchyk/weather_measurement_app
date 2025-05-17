@@ -1,6 +1,6 @@
 export const whereIncluded = <T extends Record<string, any>>(obj: T, mapper: Partial<{
-    [K in keyof T]: (val: T[K], obj: T, initialTableAlias: string) => string;
-}>, initialTableAlias: string) => {
+    [K in keyof T]: (val: T[K], obj: T, initialTableAlias?: string) => string;
+}>, initialTableAlias = "table") => {
     const filteredEntries = Object.entries(obj).filter(([_, value]) => ![undefined, null].includes(value) && value !== '');
     if (!filteredEntries.length) {
         return '';
@@ -21,5 +21,5 @@ export const whereIncluded = <T extends Record<string, any>>(obj: T, mapper: Par
         inserted: false,
     });
 
-    return `WHERE ${where.query}`;
+    return where.inserted ? `WHERE ${where.query}` : '';
 }
