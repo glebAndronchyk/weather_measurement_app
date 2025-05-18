@@ -24,6 +24,7 @@ export class LocationsController extends ControllerBase<never> {
         this._GET();
         this._GET_LOCATION_WITH_MEASUREMENTS();
         this._GET_LATEST_LOCATION_MEASUREMENT();
+        this._POST_LOCATION();
     }
 
     getBaseUrl = () => {
@@ -34,6 +35,20 @@ export class LocationsController extends ControllerBase<never> {
         return this._router;
     }
 
+    // todo
+    _POST_LOCATION() {
+        const query: RequestHandler<{}, {}, {}, {}> = async (req, res) => {
+
+        };
+
+        this._router.post('/',
+            internalServerErrorDecorator(
+                query,
+            )
+        );
+    }
+
+    // todo
     _GET_LATEST_LOCATION_MEASUREMENT = () => {
         const query: RequestHandler<{}, {}, {}, {}> = async (req, res) => {
 
