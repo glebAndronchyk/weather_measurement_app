@@ -29,6 +29,7 @@ export class MeasurementsBaseController extends ControllerBase<MeasurementsBaseC
     registerHandlers = () => {
         this._GET();
         this._GET_BY_AREA();
+        this._POST_ADD_MEASUREMENT();
     }
 
     getBaseUrl = () => {
@@ -37,6 +38,15 @@ export class MeasurementsBaseController extends ControllerBase<MeasurementsBaseC
 
     getRouter = () => {
         return this._router;
+    }
+
+    // todo
+    _POST_ADD_MEASUREMENT() {
+        const query: RequestHandler<{}, {}, {}, {}> = async (req, res) => {
+
+        };
+
+        this._router.post('/', internalServerErrorDecorator(query));
     }
 
     _GET_BY_AREA() {
