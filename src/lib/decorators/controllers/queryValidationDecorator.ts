@@ -23,6 +23,7 @@ export const queryValidationDecorator = (callback: RequestHandler<{}, {}, {}, {}
                 };
             }
         });
+
         return callback(req, res, next);
     }
 }

@@ -1,3 +1,5 @@
+import {MeasurementQueryPayloadSupertype} from "../../model/domain/measurements/MeasurementQueryPayloadPaginated.js";
+
 export const whereIncluded = <T extends Record<string, any>>(obj: T, mapper: Partial<{
     [K in keyof T]: (val: T[K], obj: T, initialTableAlias?: string) => string;
 }>, initialTableAlias = "table") => {
@@ -23,3 +25,5 @@ export const whereIncluded = <T extends Record<string, any>>(obj: T, mapper: Par
 
     return where.inserted ? `WHERE ${where.query}` : '';
 }
+
+export type WhereMapper<T> = Parameters<typeof whereIncluded<T>>[1]

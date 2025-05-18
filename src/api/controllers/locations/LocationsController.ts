@@ -8,6 +8,10 @@ import {BaseResponse} from "../../../model/controllers/errors/index.js";
 import {EStatusCode} from "../../../model/enums/index.js";
 import {queryValidationDecorator} from "../../../lib/decorators/controllers/queryValidationDecorator.js";
 import {locationsQueryPayloadValidation} from "../../../model/validation/schemas/domains/locations/index.js";
+import {IdParams} from "../../../model/controllers/IdParams.js";
+import {paramsValidationDecorator} from "../../../lib/decorators/controllers/paramsValidationDecorator.js";
+import {z} from "zod";
+import {idSchema} from "../../../model/validation/schemas/index.js";
 
 export class LocationsController extends ControllerBase<never> {
     private locationsRepository: LocationsRepository;
@@ -19,6 +23,7 @@ export class LocationsController extends ControllerBase<never> {
 
     registerHandlers = () => {
         this._GET();
+        this._GET_LOCATION_WITH_MEASUREMENTS();
     }
 
     getBaseUrl = () => {
@@ -27,6 +32,30 @@ export class LocationsController extends ControllerBase<never> {
 
     getRouter = () => {
         return this._router;
+    }
+
+    _GET_LOCATION_WITH_MEASUREMENTS = () => {
+        const query: RequestHandler<IdParams, {}, {}, LocationsFilteringQueryPayload> = async (req, res) => {
+            const payload = req.query;
+            const id = req.params.id;
+            const measurements = await this.locationsRepository.getLocationWithMeasurements(id, payload);
+            const response = new BaseResponse().setData(measurements).toDTO();
+
+            res.status(EStatusCode.SUCCESS).json(response);
+        };
+
+        // todo add better validation
+        this._router.get('/:id/measurements',
+            internalServerErrorDecorator(
+                paramsValidationDecorator(
+                    // queryValidationDecorator(
+                        query,
+                        // z.object({})
+                    // ),
+                    idSchema,
+                )
+            )
+        );
     }
 
     _GET() {

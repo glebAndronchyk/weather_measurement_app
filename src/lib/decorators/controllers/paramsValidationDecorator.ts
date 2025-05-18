@@ -2,7 +2,7 @@ import {RequestHandler} from "express";
 import {ZodSchema} from "zod";
 import {BaseResponse, ZodModelInvalidError} from "../../../model/controllers/errors/index.ts";
 
-export const paramsValidationDecorator = <TParams>(callback: RequestHandler<TParams>, schema: ZodSchema): RequestHandler<TParams> => {
+export const paramsValidationDecorator = (callback: RequestHandler<{}, {}, {}, {}>, schema: ZodSchema): RequestHandler<{}, {}, {}, {}> => {
     return (req, res, next) => {
         const { success, error, data } = schema.safeParse(req.params);
 
@@ -17,9 +17,13 @@ export const paramsValidationDecorator = <TParams>(callback: RequestHandler<TPar
 
         Object.defineProperty(req, 'params', {
             get(): any {
-                return data;
+                return {
+                    ...(structuredClone(data) as object),
+                    _validated: true,
+                };
             }
         });
+
         return callback(req, res, next);
     }
 }
