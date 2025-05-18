@@ -10,7 +10,6 @@ import {queryValidationDecorator} from "../../../lib/decorators/controllers/quer
 import {locationsQueryPayloadValidation} from "../../../model/validation/schemas/domains/locations/index.js";
 import {IdParams} from "../../../model/controllers/IdParams.js";
 import {paramsValidationDecorator} from "../../../lib/decorators/controllers/paramsValidationDecorator.js";
-import {z} from "zod";
 import {idSchema} from "../../../model/validation/schemas/index.js";
 
 export class LocationsController extends ControllerBase<never> {
@@ -24,6 +23,7 @@ export class LocationsController extends ControllerBase<never> {
     registerHandlers = () => {
         this._GET();
         this._GET_LOCATION_WITH_MEASUREMENTS();
+        this._GET_LATEST_LOCATION_MEASUREMENT();
     }
 
     getBaseUrl = () => {
@@ -32,6 +32,24 @@ export class LocationsController extends ControllerBase<never> {
 
     getRouter = () => {
         return this._router;
+    }
+
+    _GET_LATEST_LOCATION_MEASUREMENT = () => {
+        const query: RequestHandler<{}, {}, {}, {}> = async (req, res) => {
+
+        };
+
+        this._router.get('/:id/measurements/latest',
+            internalServerErrorDecorator(
+                paramsValidationDecorator(
+                    // queryValidationDecorator(
+                    query,
+                    // z.object({})
+                    // ),
+                    idSchema,
+                )
+            )
+        );
     }
 
     _GET_LOCATION_WITH_MEASUREMENTS = () => {
