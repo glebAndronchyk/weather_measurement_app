@@ -11,11 +11,13 @@ import {locationsQueryPayloadValidation} from "../../../model/validation/schemas
 import {IdParams} from "../../../model/controllers/IdParams.js";
 import {paramsValidationDecorator} from "../../../lib/decorators/controllers/paramsValidationDecorator.js";
 import {idSchema} from "../../../model/validation/schemas/index.js";
+import {locationsControllerMapper, LocationsControllerMapperSignature} from "./LocationsController.mapper.js";
+import {MeasurementPayloadSpotted} from "../../../model/domain/measurements/MeasurementQueryPayloadPaginated.js";
 
-export class LocationsController extends ControllerBase<never> {
+export class LocationsController extends ControllerBase<LocationsControllerMapperSignature> {
     private locationsRepository: LocationsRepository;
 
-    constructor(baseUrl: string, mapper: never, locationsRepository: LocationsRepository) {
+    constructor(baseUrl: string, mapper: LocationsControllerMapperSignature, locationsRepository: LocationsRepository) {
         super(baseUrl, mapper);
         this.locationsRepository = locationsRepository;
     }
@@ -48,12 +50,19 @@ export class LocationsController extends ControllerBase<never> {
         );
     }
 
-    // todo
     _GET_LATEST_LOCATION_MEASUREMENT = () => {
-        const query: RequestHandler<{}, {}, {}, {}> = async (req, res) => {
+        const query: RequestHandler<IdParams, {}, {}, MeasurementPayloadSpotted> = async (req, res) => {
+            const payload = req.query;
+            const id = req.params.id;
+            const measurements = await this.locationsRepository.getLatestMeasurements(id, payload);
+            const remappedMeasurements = this._mapper.nearestMeasurementsMapper(measurements);
 
+            const response = new BaseResponse().setData(remappedMeasurements).toDTO();
+
+            res.status(EStatusCode.SUCCESS).json(response);
         };
 
+        // todo add better validation
         this._router.get('/:id/measurements/latest',
             internalServerErrorDecorator(
                 paramsValidationDecorator(
@@ -104,4 +113,4 @@ export class LocationsController extends ControllerBase<never> {
     }
 }
 
-export const locationsController = new LocationsController("/locations", {} as never, repositories.locations)
+export const locationsController = new LocationsController("/locations", locationsControllerMapper, repositories.locations)

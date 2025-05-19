@@ -6,6 +6,8 @@ export type MeasurementQueryPayloadPaginated = PaginationParams & MeasurementQue
 export type MeasurementQueryPayloadPaginatedWithDBTableType = PaginationParams & MeasurementQueryPayloadWithDBTableType;
 export type MeasurementQueryPayloadGeographic = Omit<MeasurementQueryPayload, 'lat' | 'lon' | 'extrusion' | 'within'> & RectangularArea;
 
+export type MeasurementPayloadSpotted = Pick<MeasurementQueryPayloadSupertype, 'within' | 'type'>;
+
 export type MeasurementQueryPayloadSupertype = Partial<
     MeasurementQueryPayloadPaginated &
     MeasurementQueryPayloadPaginatedWithDBTableType &

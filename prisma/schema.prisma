@@ -252,6 +252,10 @@ view geojson_location {
   point    Json?
 }
 
+view measurement_children {
+  child_table String @unique
+}
+
 enum DEVICE_TYPE {
   AEROSTAT
   STRATOSPHERIC

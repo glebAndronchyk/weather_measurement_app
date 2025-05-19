@@ -4,6 +4,9 @@ import {
 import {pagination, whereIncluded} from "../../lib/sql/index.js";
 import {locationsMeasurementsQueryToDBMapper} from "../mappers/locationsMeasurementsQueryToDBMapper.js";
 
+/**
+ * Queries measurements related to location within specific radius
+ */
 export const RAW_queryLocationMeasurements = (id: number | string, obj: MeasurementQueryPayloadLocationBased) => {
     const tableMeasurementsAlias = "tm";
     const geojsonMeasurementAlias = "gm";
