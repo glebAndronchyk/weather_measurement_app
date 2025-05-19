@@ -14,6 +14,7 @@ import {
 } from "../../model/domain/measurements/MeasurementQueryPayloadPaginated.js";
 import {IdParams} from "../../model/controllers/IdParams.js";
 import {DatabaseSpottedMeasurementsDTO} from "../../model/dto/DatabaseSpottedMeasurementsDTO.js";
+import {CreateLocationDTO} from "../../model/dto/CreateLocationDTO.js";
 
 export class LocationsRepository {
     constructor(private connection: PrismaClient) {}
@@ -35,5 +36,19 @@ export class LocationsRepository {
 
     getAllLocations(obj: LocationsFilteringQueryPayload) {
         return this.connection.$queryRawUnsafe<GeojsonLocation[]>(RAW_queryLocations(obj));
+    }
+
+    createLocation(locationPayload: CreateLocationDTO) {
+        return this.connection.$executeRaw`
+            INSERT INTO public."Location"
+            (type, metadata, point)
+            VALUES 
+            (
+                 ${locationPayload.type},
+                 ${locationPayload.metadata},
+                 ST_SetSRID(ST_MakePoint(${locationPayload.point.x}, ${locationPayload.point.y}), 4326)
+            )
+            RETURNING id;
+        `;
     }
 }

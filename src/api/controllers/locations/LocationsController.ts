@@ -13,6 +13,7 @@ import {paramsValidationDecorator} from "../../../lib/decorators/controllers/par
 import {idSchema} from "../../../model/validation/schemas/index.js";
 import {locationsControllerMapper, LocationsControllerMapperSignature} from "./LocationsController.mapper.js";
 import {MeasurementPayloadSpotted} from "../../../model/domain/measurements/MeasurementQueryPayloadPaginated.js";
+import {CreateLocationDTO} from "../../../model/dto/CreateLocationDTO.js";
 
 export class LocationsController extends ControllerBase<LocationsControllerMapperSignature> {
     private locationsRepository: LocationsRepository;
@@ -24,9 +25,9 @@ export class LocationsController extends ControllerBase<LocationsControllerMappe
 
     registerHandlers = () => {
         this._GET();
+        this._POST_LOCATION();
         this._GET_LOCATION_WITH_MEASUREMENTS();
         this._GET_LATEST_LOCATION_MEASUREMENT();
-        this._POST_LOCATION();
     }
 
     getBaseUrl = () => {
@@ -37,10 +38,14 @@ export class LocationsController extends ControllerBase<LocationsControllerMappe
         return this._router;
     }
 
-    // todo
     _POST_LOCATION() {
-        const query: RequestHandler<{}, {}, {}, {}> = async (req, res) => {
+        const query: RequestHandler<{}, {}, CreateLocationDTO, {}> = async (req, res) => {
+            const body = req.body;
 
+            const id = await this.locationsRepository.createLocation(body);
+
+            const response = new BaseResponse().setData({ id }).toDTO();
+            res.status(EStatusCode.SUCCESS).json(response);
         };
 
         this._router.post('/',
