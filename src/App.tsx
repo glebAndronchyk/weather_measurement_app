@@ -1,6 +1,7 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 import { APPRoutingModule } from "./app/routing/APPRoutingModule";
 import { QueryClientProvider } from "./app/query";
+import axios from "axios";
 
 // <Map
 //     initialViewState={{
@@ -74,6 +75,8 @@ import { QueryClientProvider } from "./app/query";
 //         </Source>
 //     )}
 // </Map>
+
+axios.defaults.baseURL = "http://localhost:8800";
 
 function App() {
   return (

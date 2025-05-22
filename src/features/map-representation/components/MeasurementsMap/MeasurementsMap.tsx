@@ -1,15 +1,13 @@
-import { type FC, useId } from "react";
+import { type FC } from "react";
 import type { MeasurementsMapProps } from "./MeasurementsMap.types.ts";
-import { useMapLoad } from "../../../../lib/react/hooks/map";
 import { TerrainLayerSource } from "../../../../shared/components/map/sources";
-import { Source, Map } from "react-map-gl/mapbox";
-import {
-  FillLayer,
-  Fill3DLayer,
-} from "../../../../shared/components/map/layers/index.ts";
+import { Map } from "react-map-gl/mapbox";
+import { useMapLoad } from "../../../../lib/react/hooks/map";
+import { LoadMeasurementsOnMove } from "../../../../shared/components/map/internals/LoadMeasurementsOnMove.tsx";
+import { MeasurementsContent } from "../MeasurementsContent";
 
 export const MeasurementsMap: FC<MeasurementsMapProps> = (props) => {
-  const { measurementsList, mapState, terrainTileSize } = props;
+  const { mapState, terrainTileSize } = props;
   const { onLoad, isLoaded } = useMapLoad();
 
   return (
@@ -19,18 +17,12 @@ export const MeasurementsMap: FC<MeasurementsMapProps> = (props) => {
       mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
     >
       <TerrainLayerSource tileSize={terrainTileSize} />
-      {isLoaded &&
-        measurementsList.map((measurement) => (
-          <Source
-            key={measurement.id}
-            id={`measurement-${measurement.id}`}
-            type={"geojson"}
-            data={measurement.area}
-          >
-            <Fill3DLayer id={`${measurement.id}-3d-fill`} opacity={0.25} />
-            <FillLayer id={`${measurement.id}-fill`} />
-          </Source>
-        ))}
+      {isLoaded && (
+        <>
+          <LoadMeasurementsOnMove />
+          <MeasurementsContent />
+        </>
+      )}
     </Map>
   );
 };
