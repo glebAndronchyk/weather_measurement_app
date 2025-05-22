@@ -5,7 +5,7 @@ export interface MeasurementEntry {
   area: object;
   device_id: number;
   id: number;
-  measurement_type: typeof MEASUREMENT_TYPE;
+  measurement_type: keyof typeof MEASUREMENT_TYPE;
   timestamp: string;
   unit: UNITS;
 }

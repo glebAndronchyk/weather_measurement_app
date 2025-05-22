@@ -1,5 +1,5 @@
 import { MapViewPageViewModelContext } from "./MapViewPageViewModel.context.ts";
-import type { FC, PropsWithChildren } from "react";
+import { type FC, type PropsWithChildren } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { getAreaLocation } from "../../../../api/fetchers/getAreaLocation.ts";
 import type { FrustumMeasurementQueryPayload } from "../../../../api/types/FrustumMeasurementQueryPayload.ts";

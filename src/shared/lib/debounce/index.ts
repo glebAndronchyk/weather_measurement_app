@@ -1,4 +1,4 @@
-export const debounce = <TArgs extends Array>(
+export const debounce = <TArgs extends Array<unknown>>(
   cb: (...args: TArgs) => void,
   t = 300,
 ) => {

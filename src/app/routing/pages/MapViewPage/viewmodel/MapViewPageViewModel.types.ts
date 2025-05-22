@@ -5,17 +5,17 @@ import type { AreaMeasurements } from "../../../../api/fetchers/getAreaLocation.
 export interface MapViewPageViewModelContextSignature {
   measurementsQuery: UseMutationResult<
     AreaMeasurements,
-    null,
+    any,
     FrustumMeasurementQueryPayload
   >;
   devicesQuery: UseMutationResult<
     AreaMeasurements,
-    null,
+    any,
     FrustumMeasurementQueryPayload
   >;
   locationsQuery: UseMutationResult<
     AreaMeasurements,
-    null,
+    any,
     FrustumMeasurementQueryPayload
   >;
 }
