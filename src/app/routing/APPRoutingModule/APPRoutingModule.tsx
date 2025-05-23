@@ -1,6 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { lazy } from "react";
-
 const MapViewPage = lazy(() => import("../pages/MapViewPage"));
 
 const router = createBrowserRouter([

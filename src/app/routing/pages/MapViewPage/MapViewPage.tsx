@@ -5,6 +5,7 @@ import {
 import { MapViewPageLayout } from "./MapViewPage.layout.tsx";
 import { TerrainLayerSource } from "../../../../shared/components/map/sources";
 import { MapViewPageViewModelProvider } from "./viewmodel";
+import { DataFlowSelect } from "../../../../features/map-representation/components/DataFlowSelect";
 
 const MapViewPage = () => {
   return (
@@ -29,11 +30,13 @@ const MapViewPage = () => {
               maxZoom: 20,
               mapStyle: "mapbox://styles/mapbox/satellite-v9?optimize=true",
               style: {
+                position: "absolute",
                 width: "100vw",
                 height: "100vh",
               },
             }}
           />
+          <DataFlowSelect />
         </MeasurementsMapViewModel>
       </MapViewPageViewModelProvider>
     </MapViewPageLayout>

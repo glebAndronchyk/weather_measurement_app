@@ -1,4 +1,4 @@
-export const enum EGeojsonMeasurementType {
+export enum EGeojsonMeasurementType {
   Measurement = "geojson_measurement",
   Temperature = "geojson_temperaturemeasurement",
   Atmospheric = "geojson_atmosphericpressuremeasurement",
