@@ -14,6 +14,7 @@ const MapViewPage = () => {
           <MeasurementsMap
             terrainTileSize={1024}
             mapState={{
+              projection: "globe",
               initialViewState: {
                 longitude: 10,
                 latitude: 10,
@@ -26,7 +27,7 @@ const MapViewPage = () => {
               },
               minZoom: 1,
               maxZoom: 20,
-              mapStyle: "mapbox://styles/mapbox/satellite-v9",
+              mapStyle: "mapbox://styles/mapbox/satellite-v9?optimize=true",
               style: {
                 width: "100vw",
                 height: "100vh",

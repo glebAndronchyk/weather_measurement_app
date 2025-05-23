@@ -8,15 +8,15 @@ import {
 } from "../../../lib/style-flow";
 
 export const MeasurementsMapViewModel: FC<PropsWithChildren> = (props) => {
-  const { children } = props;
-
   const [state, dispatch] = useReducer(reducer, {
     dataFlow: EGeojsonMeasurementType.Temperature,
   });
 
+  const { children } = props;
+
   const measurementStyle = useMemo(() => {
     switch (state.dataFlow) {
-      case "geojson_measurement":
+      case "geojson_temperaturemeasurement":
         return temperatureMeasurementStyleFlow;
       default:
         return abstractMeasurementStyleFlow;
