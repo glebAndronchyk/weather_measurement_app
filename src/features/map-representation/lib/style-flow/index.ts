@@ -19,7 +19,6 @@ export const abstractMeasurementStyleFlow: StyleFlow = (measurement) => {
 
 export const temperatureMeasurementStyleFlow: StyleFlow = (measurement) => {
   const temperatureMeasurement = measurement;
-  console.log(temperatureMeasurement);
   // todo change field in view
   const celcius =
     temperatureMeasurement.unit === "CELCIUS"

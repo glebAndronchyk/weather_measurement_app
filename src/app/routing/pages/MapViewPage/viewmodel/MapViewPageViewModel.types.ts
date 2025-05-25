@@ -18,4 +18,6 @@ export interface MapViewPageViewModelContextSignature {
     any,
     FrustumMeasurementQueryPayload
   >;
+
+  bind: (key: string, value: unknown) => void;
 }

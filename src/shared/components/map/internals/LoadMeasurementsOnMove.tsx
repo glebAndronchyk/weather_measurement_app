@@ -12,7 +12,9 @@ export const LoadMeasurementsOnMove = () => {
   } = useMeasurementMapViewModel();
 
   const { requestMeasurementsByFrustum } = useFrustumMeasurements(
-    { current: current || null },
+    {
+      current: current || null,
+    },
     (ltc, rbc) => {
       measurementsQuery.mutate({
         type: dataFlow,
@@ -23,12 +25,18 @@ export const LoadMeasurementsOnMove = () => {
   );
 
   useEffect(() => {
+    requestMeasurementsByFrustum();
+  }, [dataFlow]);
+
+  useEffect(() => {
     if (current) {
-      current.on("moveend", () => {
-        requestMeasurementsByFrustum();
-      });
+      current.on("moveend", requestMeasurementsByFrustum);
+
+      return () => {
+        current.off("moveend", requestMeasurementsByFrustum);
+      };
     }
-  }, [current]);
+  }, [current, requestMeasurementsByFrustum]);
 
   return <></>;
 };

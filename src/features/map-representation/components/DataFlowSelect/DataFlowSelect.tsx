@@ -1,10 +1,19 @@
 import { useMeasurementMapViewModel } from "../MeasurementsMap";
 import { EGeojsonMeasurementType } from "../../../../shared/enums/EGeojsonMeasurementType.ts";
 import { Select } from "../../../../shared/components/Select";
-import type { SelectValue } from "../../../../shared/components/Select/Select.tsx";
+import type {
+  SelectProps,
+  SelectValue,
+} from "../../../../shared/components/Select/Select.tsx";
 import type { SelectChangeEvent } from "@mui/material";
+import type { FC } from "react";
 
-export const DataFlowSelect = () => {
+type DataFlowSelectProps = Omit<
+  SelectProps<EGeojsonMeasurementType>,
+  "value" | "defaultValue" | "onChange" | "items"
+>;
+
+export const DataFlowSelect: FC<DataFlowSelectProps> = (props) => {
   const { updateViewModelState, state } = useMeasurementMapViewModel();
 
   const items: SelectValue<string>[] = Object.values(
@@ -27,6 +36,8 @@ export const DataFlowSelect = () => {
 
   return (
     <Select
+      {...props}
+      variant="filled"
       value={state.dataFlow}
       defaultValue={state.dataFlow}
       onChange={handleChange}

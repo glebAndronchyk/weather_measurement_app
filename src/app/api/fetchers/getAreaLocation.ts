@@ -3,8 +3,11 @@ import type { FrustumMeasurementQueryPayload } from "../types/FrustumMeasurement
 import type { BaseResponse } from "../types/BaseResponse.ts";
 import type { MeasurementEntry } from "../types/MeasurementEntry.ts";
 
-export const getAreaLocation = async (args: FrustumMeasurementQueryPayload) => {
-  const params = new URLSearchParams();
+export const getAreaLocation = async (
+  args: FrustumMeasurementQueryPayload,
+  additionalParams?: URLSearchParams,
+) => {
+  const params = new URLSearchParams(additionalParams || []);
   Object.entries(args).forEach(([key, val]) => {
     const mappedParamValue = Array.isArray(val) ? val.join(",") : val;
     params.append(key, mappedParamValue);

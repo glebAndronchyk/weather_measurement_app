@@ -6,12 +6,14 @@ import { MapViewPageLayout } from "./MapViewPage.layout.tsx";
 import { TerrainLayerSource } from "../../../../shared/components/map/sources";
 import { MapViewPageViewModelProvider } from "./viewmodel";
 import { DataFlowSelect } from "../../../../features/map-representation/components/DataFlowSelect";
+import { MapControls } from "../../../../features/map-controls";
+import { MapControlsViewModel } from "../../../../features/map-controls/viewmodel";
 
 const MapViewPage = () => {
   return (
-    <MapViewPageLayout>
-      <MapViewPageViewModelProvider>
-        <MeasurementsMapViewModel>
+    <MapViewPageViewModelProvider>
+      <MeasurementsMapViewModel>
+        <MapViewPageLayout>
           <MeasurementsMap
             terrainTileSize={1024}
             mapState={{
@@ -30,16 +32,18 @@ const MapViewPage = () => {
               maxZoom: 20,
               mapStyle: "mapbox://styles/mapbox/satellite-v9?optimize=true",
               style: {
-                position: "absolute",
-                width: "100vw",
+                flex: 1,
                 height: "100vh",
               },
             }}
           />
-          <DataFlowSelect />
-        </MeasurementsMapViewModel>
-      </MapViewPageViewModelProvider>
-    </MapViewPageLayout>
+          <DataFlowSelect sx={{ position: "absolute" }} />
+          <MapControlsViewModel>
+            <MapControls />
+          </MapControlsViewModel>
+        </MapViewPageLayout>
+      </MeasurementsMapViewModel>
+    </MapViewPageViewModelProvider>
   );
 };
 
