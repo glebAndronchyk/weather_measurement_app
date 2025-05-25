@@ -7,16 +7,14 @@ import {
 export const locationsMeasurementsQueryToDBMapper: WhereMapper<MeasurementQueryPayloadLocationBased> = {
     ...measurementsFieldToQueryMapper,
     within: (val) => `
-                (
-                   ST_3DIntersects(
-                        ST_Buffer
-                        (
-                            l.point,
-                            ${val},
-                            'quad_segs=8'
-                        ),
-                        tm.area
-                    )
+               ST_3DIntersects(
+                    ST_Buffer
+                    (
+                        l.point,
+                        ${val},
+                        'quad_segs=8'
+                    ),
+                    tm.area
                 )
             `
 }

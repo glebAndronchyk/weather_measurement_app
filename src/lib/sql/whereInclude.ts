@@ -1,4 +1,6 @@
-import {MeasurementQueryPayloadSupertype} from "../../model/domain/measurements/MeasurementQueryPayloadPaginated.js";
+const removeTrailingAND = (query: string) => {
+    return query.replace(/AND\s*\(\)([\s\n]+)?$/, '');
+}
 
 export const whereIncluded = <T extends Record<string, any>>(obj: T, mapper: Partial<{
     [K in keyof T]: (val: T[K], obj: T, initialTableAlias?: string) => string;
@@ -15,13 +17,15 @@ export const whereIncluded = <T extends Record<string, any>>(obj: T, mapper: Par
         const result = fn(filteredObject[key], obj, initialTableAlias);
 
         return {
-            query: `${query} ${inserted ? 'AND' : ''} ${result} `,
-            inserted: Boolean(result),
+            query: `${query} ${inserted ? 'AND' : ''} (${result}) `,
+            inserted: inserted || Boolean(result),
         };
     }, {
         query: '',
         inserted: false,
     });
+
+    where.query = removeTrailingAND(where.query);
 
     return where.inserted ? `WHERE ${where.query}` : '';
 }
