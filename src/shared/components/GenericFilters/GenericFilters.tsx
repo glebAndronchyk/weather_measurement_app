@@ -14,13 +14,20 @@ export const GenericFilters = (props) => {
     onFilterChange(e, filtersRef.current);
   };
 
+  const handleMultiKeyChange = (e: never, data: FilterChangePayload[]) => {
+    data.forEach((entry) => handleChange(e, entry));
+  };
+
   return (
     <Stack>
       {filters.map((filter) => (
         <Box key={filter.id}>
           <Box>{filter.label}</Box>
           <Box>
-            <filter.component onChange={handleChange} />
+            <filter.component
+              onMultiKeyChange={handleMultiKeyChange}
+              onChange={handleChange}
+            />
           </Box>
         </Box>
       ))}

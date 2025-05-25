@@ -2,6 +2,7 @@ import type { FC, ReactNode } from "react";
 
 export type GenericFilterComponent = FC<{
   onChange: (e: never, data: FilterChangePayload) => void;
+  onMultiKeyChange: (e: never, data: FilterChangePayload[]) => void;
 }>;
 
 export interface FilterChangePayload {
