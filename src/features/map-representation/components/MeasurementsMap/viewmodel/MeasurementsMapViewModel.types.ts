@@ -5,7 +5,9 @@ import type { StyleFlow } from "../../../lib/style-flow";
 export interface CONTEXT_MeasurementsMapViewModelSignature {
   updateViewModelState: DISPATCH_MeasurementsMapViewModelSignature;
   state: STATE_MeasurementsMapViewModelSignature;
-  measurementStyle: StyleFlow;
+  getMeasurementStyle: (args?: {
+    lookupType?: "area" | "pagination";
+  }) => StyleFlow;
 }
 
 export interface STATE_MeasurementsMapViewModelSignature {
