@@ -6,10 +6,13 @@ import { useMeasurementMapViewModel } from "../../../../features/map-representat
 
 export const LoadMeasurementsOnMove = () => {
   const { current } = useMap();
-  const { measurementsQuery } = useMapViewPageViewModel();
+  const { measurementsQuery, obtainQueryPayloadEntry } =
+    useMapViewPageViewModel();
   const {
     state: { dataFlow },
   } = useMeasurementMapViewModel();
+
+  const measurementsFilters = obtainQueryPayloadEntry("measurementsFilter");
 
   const { requestMeasurementsByFrustum } = useFrustumMeasurements(
     {
@@ -26,7 +29,7 @@ export const LoadMeasurementsOnMove = () => {
 
   useEffect(() => {
     requestMeasurementsByFrustum();
-  }, [dataFlow]);
+  }, [dataFlow, measurementsFilters]);
 
   useEffect(() => {
     if (current) {

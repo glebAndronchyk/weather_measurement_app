@@ -14,6 +14,11 @@ export const reducer = (
         ...state,
         filters: new URLSearchParams(),
       };
+    case "setLookupType":
+      return {
+        ...state,
+        lookupType: action.payload,
+      };
   }
 };
 

@@ -29,8 +29,8 @@ const MapViewPage = () => {
                 exaggeration: 30,
               },
               minZoom: 1,
-              maxZoom: 20,
-              mapStyle: "mapbox://styles/mapbox/satellite-v9?optimize=true",
+              maxZoom: 24,
+              mapStyle: "mapbox://styles/fenrisulven/cmb5gv7qq00lj01qx9l8d1r9q",
               style: {
                 flex: 1,
                 height: "100vh",
