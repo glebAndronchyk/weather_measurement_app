@@ -1,24 +1,18 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 import { APPRoutingModule } from "./app/routing/APPRoutingModule";
-import { QueryClientProvider } from "./app/query";
 import axios from "axios";
-import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { CssBaseline } from "@mui/material";
+import { withCoreProviders } from "./app/lib/withCoreProviders.tsx";
 
 axios.defaults.baseURL = "http://localhost:8800";
 
 function App() {
   return (
-    <QueryClientProvider>
-      <ThemeProvider theme={createTheme()}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <APPRoutingModule />
-          <CssBaseline />
-        </LocalizationProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <>
+      <APPRoutingModule />
+      <CssBaseline />
+    </>
   );
 }
 
-export default App;
+export default withCoreProviders(App);

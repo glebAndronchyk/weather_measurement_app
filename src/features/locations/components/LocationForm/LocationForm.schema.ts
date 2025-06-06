@@ -1,8 +1,5 @@
 import { z } from "zod";
-import {
-  coordinatesTuple,
-  jsonString,
-} from "../../../../../../lib/validation/zod";
+import { coordinatesTuple, jsonString } from "../../../../lib/validation/zod";
 
 export const locationFormValidationSchema = z.object({
   locationCenter: coordinatesTuple,
