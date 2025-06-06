@@ -4,9 +4,11 @@ import { TerrainLayerSource } from "../../../../shared/components/map/sources";
 import { Map } from "react-map-gl/mapbox";
 import { MeasurementsContent } from "../MeasurementsContent";
 import { DataLoader } from "../DataLoader";
+import { useMapLoad } from "../../../../lib/react/hooks/map";
 
 export const MeasurementsMap: FC<MeasurementsMapProps> = (props) => {
   const { mapState, terrainTileSize } = props;
+  const { isLoaded, onLoad } = useMapLoad();
 
   return (
     <Map
@@ -16,11 +18,16 @@ export const MeasurementsMap: FC<MeasurementsMapProps> = (props) => {
         console.log(e);
         console.log(e.features);
       }}
+      onLoad={onLoad}
       mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
     >
-      <TerrainLayerSource tileSize={terrainTileSize} />
-      <DataLoader />
-      <MeasurementsContent />
+      {isLoaded && (
+        <>
+          <TerrainLayerSource tileSize={terrainTileSize} />
+          <DataLoader />
+          <MeasurementsContent />
+        </>
+      )}
     </Map>
   );
 };
