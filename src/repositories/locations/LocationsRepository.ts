@@ -15,6 +15,8 @@ import {
 import {IdParams} from "../../model/controllers/IdParams.js";
 import {DatabaseSpottedMeasurementsDTO} from "../../model/dto/DatabaseSpottedMeasurementsDTO.js";
 import {CreateLocationDTO} from "../../model/dto/CreateLocationDTO.js";
+import {toSqlJson} from "../../lib/sql/toSqlJson.js";
+import {DatabaseAllMeasurementsDTO} from "../../model/dto/DatabaseAllMeasurementsDTO.js";
 
 export class LocationsRepository {
     constructor(private connection: PrismaClient) {}
@@ -31,7 +33,7 @@ export class LocationsRepository {
     }
 
     getLocationWithMeasurements(id: number | string, obj: MeasurementQueryPayloadLocationBased) {
-        return this.connection.$queryRawUnsafe<Measurement[]>(RAW_queryLocationMeasurements(id, obj));
+        return this.connection.$queryRawUnsafe<DatabaseAllMeasurementsDTO>(RAW_queryLocationMeasurements(id, obj));
     }
 
     getAllLocations(obj: LocationsFilteringQueryPayload) {
@@ -39,16 +41,19 @@ export class LocationsRepository {
     }
 
     createLocation(locationPayload: CreateLocationDTO) {
-        return this.connection.$executeRaw`
-            INSERT INTO public."Location"
-            (type, metadata, point)
-            VALUES 
-            (
-                 ${locationPayload.type},
-                 ${locationPayload.metadata},
-                 ST_SetSRID(ST_MakePoint(${locationPayload.point.x}, ${locationPayload.point.y}), 4326)
-            )
-            RETURNING id;
-        `;
+        const { type, metadata, point } = locationPayload;
+        const sqlJSON = toSqlJson(JSON.stringify(metadata));
+
+        return this.connection.$queryRawUnsafe(
+            `
+                INSERT INTO public."Location" (type, metadata, point)
+                VALUES (
+                               '${type}',
+                               ${sqlJSON}::jsonb,
+                               ST_SetSRID(ST_MakePoint(${point[0]}, ${point[1]}), 4326)
+                       )
+                RETURNING id;
+            `
+        );
     }
 }

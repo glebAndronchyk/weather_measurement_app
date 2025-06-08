@@ -6,27 +6,23 @@ import {
     MeasurementQueryPayloadSupertype
 } from "../../model/domain/measurements/MeasurementQueryPayloadPaginated.js";
 import {allMeasurementsPayloadMapper} from "../mappers/allMeasurementsPayloadMapper.js";
+import {itemsCountQuery} from "../../lib/sql/itemsCountQuery.js";
 
 export const RAW_queryAllMeasurements = (obj: MeasurementQueryPayloadSupertype, initialTableAlias = 'measurement') => {
     const paginationQuery = pagination(obj);
     const whereQuery = whereIncluded(obj, allMeasurementsPayloadMapper, initialTableAlias);
 
-    return `
-        SELECT 
-            json_build_object(
-                'items', COALESCE(items_array, '[]'::jsonb),
-                'totalItems', total_items
-            ) as result
-        FROM 
-            (
+    return itemsCountQuery(
+        (aggregateItemsField, countedItemsField) => `
+             (
                 SELECT
-                    count(*) as total_items
+                    count(*) as ${countedItemsField}
                 FROM public."${obj.type}" ${initialTableAlias}
             ) 
                 CROSS JOIN 
             (
                 SELECT 
-                    jsonb_agg(sub.*) as items_array
+                    jsonb_agg(sub.*) as ${aggregateItemsField}
                 FROM (
                     SELECT * 
                         FROM public."${obj.type}" ${initialTableAlias}
@@ -34,5 +30,6 @@ export const RAW_queryAllMeasurements = (obj: MeasurementQueryPayloadSupertype, 
                         ${paginationQuery}
                 ) as sub
             )
-    `
+        `
+    );
 }

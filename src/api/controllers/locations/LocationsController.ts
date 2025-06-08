@@ -86,7 +86,8 @@ export class LocationsController extends ControllerBase<LocationsControllerMappe
             const payload = req.query;
             const id = req.params.id;
             const measurements = await this.locationsRepository.getLocationWithMeasurements(id, payload);
-            const response = new BaseResponse().setData(measurements).toDTO();
+            const remappedResult = this._mapper.mapAllMeasurementsResult(measurements);
+            const response = new BaseResponse().setData(remappedResult).toDTO();
 
             res.status(EStatusCode.SUCCESS).json(response);
         };

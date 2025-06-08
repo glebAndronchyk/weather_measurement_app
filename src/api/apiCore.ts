@@ -6,4 +6,6 @@ export const apiCore = express();
 apiCore.use(express.json());
 apiCore.use(cors());
 
-apiCore.listen(8800, () => console.log(`http://localhost:8800`));
+apiCore.listen(8800, (err) => {
+    console.log(`http://localhost:8800`)
+});
