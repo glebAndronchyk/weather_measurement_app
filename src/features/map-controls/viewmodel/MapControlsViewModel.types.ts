@@ -8,6 +8,7 @@ export interface CONTEXT_MapControlsViewModelSignature {
 export interface STATE_MapControlsViewModelSignature {
   filters: URLSearchParams;
   lookupType: "area" | "pagination";
+  selectedLocation: never | null;
 }
 
 export type DispatchAction =
@@ -18,4 +19,8 @@ export type DispatchAction =
   | {
       type: "setLookupType";
       payload: "area" | "pagination";
+    }
+  | {
+      type: "setSelectedLocation";
+      payload: never;
     };

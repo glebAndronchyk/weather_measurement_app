@@ -19,6 +19,11 @@ export const reducer = (
         ...state,
         lookupType: action.payload,
       };
+    case "setSelectedLocation":
+      return {
+        ...state,
+        selectedLocation: action.payload,
+      };
   }
 };
 

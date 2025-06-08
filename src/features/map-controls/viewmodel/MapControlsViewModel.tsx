@@ -7,6 +7,8 @@ export const MapControlsViewModel: FC<PropsWithChildren> = (props) => {
 
   const [state, dispatch] = useReducer(reducer, {
     filters: new URLSearchParams(),
+    lookupType: "area",
+    selectedLocation: null as never,
   });
 
   return (
