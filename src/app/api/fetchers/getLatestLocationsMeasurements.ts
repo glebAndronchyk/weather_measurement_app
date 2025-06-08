@@ -4,11 +4,11 @@ import type { PaginatedResponse } from "../types/PaginatedResponse.ts";
 import type { Location } from "../types/Location.ts";
 import type { LocationMeasurementsPayload } from "../types/LocationMeasurementsPayload.ts";
 
-export const getLocationWithMeasurements = async (
+export const getLatestLocationsMeasurements = async (
   args: LocationMeasurementsPayload,
 ) => {
   const response = await axios.get<BaseResponse<PaginatedResponse<Location>>>(
-    `/locations/${args.id}/measurements`,
+    `/locations/${args.id}/measurements/latest`,
     {
       params: new URLSearchParams({
         take: String(args.take),

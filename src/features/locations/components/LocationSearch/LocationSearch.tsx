@@ -2,9 +2,10 @@ import { type FC, type SyntheticEvent, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { getLocations } from "../../../../app/api/fetchers/getLocations.ts";
 import { Autocomplete, TextField } from "@mui/material";
+import type { Location } from "../../../../app/api/types/Location.ts";
 
 interface LocationSearchProps {
-  onChange: (location: never) => void;
+  onChange: (location: Location | null) => void;
 }
 
 export const LocationSearch: FC<LocationSearchProps> = (props) => {
@@ -27,7 +28,7 @@ export const LocationSearch: FC<LocationSearchProps> = (props) => {
     setSearchString(value.toLowerCase());
   };
 
-  const handleChange = (_: SyntheticEvent, value) => {
+  const handleChange = (_: SyntheticEvent, value: Location | null) => {
     onChange(value);
   };
 

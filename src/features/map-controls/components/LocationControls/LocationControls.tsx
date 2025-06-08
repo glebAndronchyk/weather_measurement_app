@@ -7,6 +7,8 @@ import {
 import { LocationSearch } from "../../../locations/components/LocationSearch";
 import { useMapControlsViewModel } from "../../viewmodel";
 import { useMeasurementMapViewModel } from "../../../map-representation";
+import { useLocationControlsState } from "./hooks/useLocationControlsState.ts";
+import { km_to_m } from "../../../../lib/math/phys";
 
 export const LocationControls = () => {
   const {
@@ -17,6 +19,11 @@ export const LocationControls = () => {
   const {
     state: { dataFlow },
   } = useMeasurementMapViewModel();
+
+  const { setLookupWithin, setLookupType, lookupWithin, lookupType } =
+    useLocationControlsState({
+      defaultMetersWithin: km_to_m(20),
+    });
 
   return (
     <SectionAccordion title="Location controls">
@@ -31,6 +38,10 @@ export const LocationControls = () => {
           }
         />
         <LocationMeasurementsControls
+          onWithinChange={setLookupWithin}
+          onLookupTypeChange={setLookupType}
+          lookupWithin={lookupWithin}
+          lookupType={lookupType}
           dataFlow={dataFlow}
           selectedLocation={selectedLocation}
         />

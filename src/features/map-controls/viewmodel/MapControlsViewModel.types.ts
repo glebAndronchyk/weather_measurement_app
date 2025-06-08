@@ -1,4 +1,5 @@
 import type { DISPATCH_MeasurementsMapViewModelSignature } from "./MapControlsViewModel.reducer.ts";
+import type { Location } from "../../../app/api/types/Location.ts";
 
 export interface CONTEXT_MapControlsViewModelSignature {
   updateViewModelState: DISPATCH_MeasurementsMapViewModelSignature;
@@ -8,7 +9,7 @@ export interface CONTEXT_MapControlsViewModelSignature {
 export interface STATE_MapControlsViewModelSignature {
   filters: URLSearchParams;
   lookupType: "area" | "pagination";
-  selectedLocation: never | null;
+  selectedLocation: Location | null;
 }
 
 export type DispatchAction =
@@ -22,5 +23,5 @@ export type DispatchAction =
     }
   | {
       type: "setSelectedLocation";
-      payload: never;
+      payload: Location | null;
     };

@@ -1,98 +1,103 @@
-import { useMutation } from "@tanstack/react-query";
-import { Button, Stack } from "@mui/material";
+import {
+  Stack,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { getLocationWithMeasurements } from "../../../../app/api/fetchers/getLocationWithMeasurements.ts";
-import { type FC, useEffect } from "react";
+import { type ChangeEvent, type FC, type MouseEvent } from "react";
 import {
   objectToColumnDefinition,
   usePagination,
 } from "../../../../shared/lib/mui";
+import { useLocationMeasurements } from "./hooks/useLocationMeasurements.ts";
+import type { MeasurementLookupType } from "../../../../shared/types/MeasurementLookupType.ts";
+import type { Location } from "../../../../app/api/types/Location.ts";
+import { km_to_m, m_to_km } from "../../../../lib/math/phys";
 
 interface LocationMeasurementsControlsProps {
-  selectedLocation: null;
-  dataFlow: never;
-  isLatestLookup?: boolean;
+  selectedLocation: Location | null;
+  dataFlow: string;
+  lookupWithin: number;
+  lookupType: MeasurementLookupType;
+  onLookupTypeChange: (lookupType: MeasurementLookupType) => void;
+  onWithinChange: (m: number) => void;
 }
 
 export const LocationMeasurementsControls: FC<
   LocationMeasurementsControlsProps
 > = (props) => {
-  const { selectedLocation, dataFlow, isLatestLookup } = props;
+  const {
+    selectedLocation,
+    dataFlow,
+    lookupWithin,
+    onWithinChange,
+    lookupType,
+    onLookupTypeChange,
+  } = props;
+
   const {
     model,
     state: { take, skip },
     controls: { onPaginationModelChange },
   } = usePagination();
 
-  const {
-    mutate: getWholeLocationMeasurements,
-    data: fullListOfMeasurements,
-    isPending,
-  } = useMutation({
-    mutationKey: ["locationMeasurements"],
-    mutationFn: () =>
-      getLocationWithMeasurements(
-        selectedLocation?.id || -1,
-        take,
-        skip,
-        dataFlow,
-      ),
+  const { hasData, measurementsQuery } = useLocationMeasurements({
+    take,
+    lookupType,
+    selectedLocation,
+    skip,
+    dataFlow,
+    lookupWithin,
   });
 
-  const {
-    mutate: getLatestLocationMeasurement,
-    data: latestListOfMeasurements,
-  } = useMutation({
-    mutationKey: ["latestLocationMeasurements"],
-    mutationFn: () =>
-      getLocationWithMeasurements(
-        selectedLocation?.id || -1,
-        take,
-        skip,
-        dataFlow,
-      ),
-  });
+  const data = measurementsQuery.data;
 
-  const hasData =
-    Boolean(fullListOfMeasurements) || Boolean(latestListOfMeasurements);
+  const handleLookupTypeChange = (
+    _: MouseEvent,
+    value: MeasurementLookupType[],
+  ) => {
+    onLookupTypeChange(value[0]);
+  };
 
-  const onInitialSearch = (fn: VoidFunction) => () => fn();
-  const shownData = isLatestLookup
-    ? latestListOfMeasurements
-    : fullListOfMeasurements;
+  const handleWithinChange = (e: ChangeEvent<HTMLInputElement>) => {
+    onWithinChange(km_to_m(Number(e.target.value)));
+  };
 
-  useEffect(() => {
-    if (selectedLocation) {
-      getWholeLocationMeasurements();
-    }
-  }, [model, selectedLocation]);
+  const columns = objectToColumnDefinition(
+    data?.items?.[0],
+    (field) => field !== "area",
+  );
 
   return (
-    <Stack>
-      <Button
-        disabled={!selectedLocation}
-        onClick={onInitialSearch(getWholeLocationMeasurements)}
-        variant="contained"
-      >
-        Get Location Measurements
-      </Button>
-      <Button
-        disabled={!selectedLocation}
-        onClick={onInitialSearch(getLatestLocationMeasurement)}
-        variant="contained"
-      >
-        Get Latest Location Measurements
-      </Button>
+    <Stack gap={2}>
+      <Stack flexDirection="row" alignItems="center" gap={2}>
+        <Typography>Measurement:</Typography>
+        <ToggleButtonGroup
+          disabled={!selectedLocation}
+          onChange={handleLookupTypeChange}
+        >
+          <ToggleButton value="all">All</ToggleButton>
+          <ToggleButton value="latest">Latest</ToggleButton>
+        </ToggleButtonGroup>
+        <Typography>Within (km):</Typography>
+        <TextField
+          type="number"
+          onChange={handleWithinChange}
+          value={m_to_km(lookupWithin)}
+        />
+      </Stack>
       {hasData && selectedLocation && (
         <DataGrid
-          loading={isPending}
+          loading={measurementsQuery.isPending}
           paginationMode="server"
           pageSizeOptions={[5, 10, 25]}
           paginationModel={model}
           onPaginationModelChange={onPaginationModelChange}
-          columns={objectToColumnDefinition(shownData?.items[0] || {})}
-          rows={shownData?.items || []}
-          rowCount={shownData?.totalItems}
+          columns={columns}
+          rows={data?.items || []}
+          rowCount={data?.totalItems || 0}
         />
       )}
     </Stack>
