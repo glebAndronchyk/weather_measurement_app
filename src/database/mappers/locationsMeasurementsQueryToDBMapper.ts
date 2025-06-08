@@ -8,13 +8,12 @@ export const locationsMeasurementsQueryToDBMapper: WhereMapper<MeasurementQueryP
     ...measurementsFieldToQueryMapper,
     within: (val) => `
                ST_3DIntersects(
-                    ST_Buffer
-                    (
-                        l.point,
+                    ST_Buffer(
+                        ST_Transform(l.point, 3857),
                         ${val},
                         'quad_segs=8'
                     ),
-                    tm.area
+                    ST_Transform(tm.area, 3857)
                 )
             `
 }
