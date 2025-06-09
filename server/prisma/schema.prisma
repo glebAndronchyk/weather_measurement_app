@@ -1,0 +1,282 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["typedSql", "views"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This table has subclasses and requires additional setup for migrations. Visit https://pris.ly/d/table-inheritance for more info.
+model Measurement {
+  id               Int                     @id @default(autoincrement())
+  device_id        Int
+  timestamp        DateTime                @db.Date
+  area             Unsupported("geometry")
+  measurement_type MEASUREMENT_TYPE?
+  unit             UNITS?
+  Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+
+  @@index([area], map: "area_index", type: Gist)
+}
+
+model TemperatureMeasurement {
+  id               Int                     @id @default(autoincrement())
+  temperature      Float
+  device_id        Int
+  timestamp        DateTime                @db.Date
+  area             Unsupported("geometry")
+  measurement_type MEASUREMENT_TYPE?       @default(TEMPERATURE_MEASUREMENT)
+  unit             UNITS?
+  Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+}
+
+model Vendor {
+  id     Int      @id @default(autoincrement())
+  name   String
+  type   String
+  Device Device[]
+}
+
+model Device {
+  device_type                    DEVICE_TYPE
+  features                       String[]
+  precision                      Float
+  serial_number                  Int                              @default(autoincrement())
+  id                             Int                              @id @unique @default(autoincrement())
+  vendor_id                      Int?
+  date_assembled                 DateTime                         @db.Date
+  AirQualityMeasurement          AirQualityMeasurement[]
+  AtmosphericPressureMeasurement AtmosphericPressureMeasurement[]
+  CloudCovertMeasurement         CloudCovertMeasurement[]
+  Vendor                         Vendor?                          @relation(fields: [vendor_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "vendor_id")
+  DeviceHealthLog                DeviceHealthLog[]
+  FogLevelMeasurement            FogLevelMeasurement[]
+  Measurement                    Measurement[]
+  TemperatureMeasurement         TemperatureMeasurement[]
+  WindMeasurement                WindMeasurement[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model spatial_ref_sys {
+  srid      Int     @id
+  auth_name String? @db.VarChar(256)
+  auth_srid Int?
+  srtext    String? @db.VarChar(2048)
+  proj4text String? @db.VarChar(2048)
+}
+
+model AirQualityMeasurement {
+  id               Int                     @id
+  device_id        Int
+  timestamp        DateTime                @db.Date
+  area             Unsupported("geometry")
+  no2              Float?
+  so2              Float?
+  o3               Float?
+  aqi              Float?
+  humidity         Float?
+  measurement_type MEASUREMENT_TYPE?       @default(AIR_QUALITY_MEASUREMENT)
+  unit             UNITS?
+  Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+}
+
+model AtmosphericPressureMeasurement {
+  id               Int                     @id
+  device_id        Int
+  timestamp        DateTime                @db.Date
+  area             Unsupported("geometry")
+  atm              Float
+  measurement_type MEASUREMENT_TYPE?       @default(ATMOSPHERIC_PRESSURE_MEASUREMENT)
+  unit             UNITS?
+  Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model CloudCovertMeasurement {
+  id               Int                     @id
+  device_id        Int
+  timestamp        DateTime                @db.Date
+  area             Unsupported("geometry")
+  ccp              Decimal                 @db.Decimal
+  measurement_type MEASUREMENT_TYPE?       @default(CLOUD_COVERT_MEASUREMENT)
+  unit             UNITS?
+  Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+}
+
+model DeviceHealthLog {
+  id          Int      @id @default(autoincrement())
+  timestamp   DateTime @db.Date
+  bucket_path String
+  device_id   Int
+  Device      Device   @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+}
+
+model FogLevelMeasurement {
+  id               Int                     @id
+  device_id        Int
+  timestamp        DateTime                @db.Date
+  area             Unsupported("geometry")
+  density          Float
+  measurement_type MEASUREMENT_TYPE?       @default(FOG_LEVEL_MEASUREMENT)
+  unit             UNITS?
+  Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+}
+
+model WindMeasurement {
+  id               Int                     @id
+  device_id        Int
+  timestamp        DateTime                @db.Date
+  area             Unsupported("geometry")
+  speed            Float?
+  direction        String?
+  measurement_type MEASUREMENT_TYPE?       @default(WIND_MEASUREMENT)
+  unit             UNITS?
+  Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
+}
+
+model Location {
+  id       Int                     @id @default(autoincrement())
+  type     String
+  metadata Json
+  point    Unsupported("geometry")
+}
+
+view geojson_measurement {
+  measurement_type MEASUREMENT_TYPE?
+  id               Int               @unique
+  device_id        Int?
+  timestamp        DateTime?         @db.Date
+  area             Json?
+  unit             UNITS?
+}
+
+view geojson_temperaturemeasurement {
+  measurement_type MEASUREMENT_TYPE?
+  id               Int               @unique
+  device_id        Int?
+  timestamp        DateTime?         @db.Date
+  temp_c           Float?
+  area             Json?
+  unit             UNITS?
+}
+
+view geojson_foglevelmeasurement {
+  measurement_type MEASUREMENT_TYPE?
+  id               Int               @unique
+  device_id        Int?
+  timestamp        DateTime?         @db.Date
+  density          Float?
+  area             Json?
+  unit             UNITS?
+}
+
+view geojson_windmeasurement {
+  measurement_type MEASUREMENT_TYPE?
+  id               Int               @unique
+  device_id        Int?
+  timestamp        DateTime?         @db.Date
+  speed            Float?
+  direction        String?
+  area             Json?
+  unit             UNITS?
+}
+
+view geojson_airqualitymeasurement {
+  measurement_type MEASUREMENT_TYPE?
+  id               Int               @unique
+  device_id        Int?
+  timestamp        DateTime?         @db.Date
+  no2              Float?
+  so2              Float?
+  o3               Float?
+  aqi              Float?
+  humidity         Float?
+  area             Json?
+  unit             UNITS?
+}
+
+view geojson_atmosphericpressuremeasurement {
+  measurement_type MEASUREMENT_TYPE?
+  id               Int               @unique
+  device_id        Int?
+  timestamp        DateTime?         @db.Date
+  atm              Float?
+  area             Json?
+  unit             UNITS?
+}
+
+view geojson_cloudcovertmeasurement {
+  measurement_type MEASUREMENT_TYPE?
+  id               Int               @unique
+  device_id        Int?
+  timestamp        DateTime?         @db.Date
+  ccp              Decimal?          @db.Decimal
+  area             Json?
+  unit             UNITS?
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view geography_columns {
+  f_table_catalog    Unsupported("name")?
+  f_table_schema     Unsupported("name")?
+  f_table_name       Unsupported("name")?
+  f_geography_column Unsupported("name")?
+  coord_dimension    Int?
+  srid               Int?
+  type               String?
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view geometry_columns {
+  f_table_catalog   String?              @db.VarChar(256)
+  f_table_schema    Unsupported("name")?
+  f_table_name      Unsupported("name")?
+  f_geometry_column Unsupported("name")?
+  coord_dimension   Int?
+  srid              Int?
+  type              String?              @db.VarChar(30)
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view geojson_location {
+  id       Int     @id
+  type     String?
+  metadata Json?
+  point    Json?
+}
+
+view measurement_children {
+  child_table String @unique
+}
+
+enum DEVICE_TYPE {
+  AEROSTAT
+  STRATOSPHERIC
+  GROUND_STATION
+  MARINE
+  AIRCRAFT_      @map("AIRCRAFT ")
+  ORBITAL
+}
+
+enum MEASUREMENT_TYPE {
+  MEASUREMENT
+  TEMPERATURE_MEASUREMENT
+  FOG_LEVEL_MEASUREMENT
+  WIND_MEASUREMENT
+  AIR_QUALITY_MEASUREMENT
+  ATMOSPHERIC_PRESSURE_MEASUREMENT
+  CLOUD_COVERT_MEASUREMENT
+}
+
+enum UNITS {
+  CELCIUS
+  FAHRENHEIT
+  MPS
+}

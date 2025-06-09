@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "NodeNext",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "allowImportingTsExtensions": true,
+    "sourceMap": true,
+    "moduleResolution": "nodenext",
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@generated": ["src/generated/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}

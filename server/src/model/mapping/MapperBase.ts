@@ -1,0 +1,1 @@
+export interface MapperBase<TIn, TOut> extends Record<string, (val: TIn) => TOut> {}
