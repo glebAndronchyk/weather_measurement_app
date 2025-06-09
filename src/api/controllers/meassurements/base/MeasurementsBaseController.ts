@@ -17,6 +17,13 @@ import {
     measurementsBaseControllerMapper,
     MeasurementsBaseControllerMapperSignature
 } from "./MeasurementsBaseController.mapper.js";
+import {
+    CreateMeasurementDBPayload,
+} from "../../../../model/domain/measurements/CreateMeasurementPayload.js";
+import {bodyValidationDecorator} from "../../../../lib/decorators/controllers/bodyValidationDecorator.js";
+import {
+    createManyMeasurementsPayloadValidation,
+} from "../../../../model/validation/schemas/domains/measurements/createMeasurementPayloadValidation.js";
 
 export class MeasurementsBaseController extends ControllerBase<MeasurementsBaseControllerMapperSignature> {
    private _measurementsBaseRepository: MeasurementsBaseRepository;
@@ -29,7 +36,7 @@ export class MeasurementsBaseController extends ControllerBase<MeasurementsBaseC
     registerHandlers = () => {
         this._GET();
         this._GET_BY_AREA();
-        this._POST_ADD_MEASUREMENT();
+        this._POST_MEASUREMENTS();
     }
 
     getBaseUrl = () => {
@@ -40,13 +47,24 @@ export class MeasurementsBaseController extends ControllerBase<MeasurementsBaseC
         return this._router;
     }
 
-    // todo
-    _POST_ADD_MEASUREMENT() {
-        const query: RequestHandler<{}, {}, {}, {}> = async (req, res) => {
+    _POST_MEASUREMENTS() {
+        const query: RequestHandler<{}, {}, { items: CreateMeasurementDBPayload[] }, {}> = async (req, res) => {
+           const body = req.body;
 
+           await this._measurementsBaseRepository.createManyMeasurements(body.items);
+           const baseResponse = new BaseResponse().setData(null);
+
+           res.status(EStatusCode.SUCCESS).json(baseResponse.toDTO());
         };
 
-        this._router.post('/', internalServerErrorDecorator(query));
+        this._router.post('/many',
+            internalServerErrorDecorator(
+                bodyValidationDecorator(
+                    query,
+                    createManyMeasurementsPayloadValidation
+                )
+            )
+        );
     }
 
     _GET_BY_AREA() {
