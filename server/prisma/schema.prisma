@@ -43,7 +43,6 @@ model Vendor {
 model Device {
   device_type                    DEVICE_TYPE
   features                       String[]
-  precision                      Float
   serial_number                  Int                              @default(autoincrement())
   id                             Int                              @id @unique @default(autoincrement())
   vendor_id                      Int?

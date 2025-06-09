@@ -1,5 +1,4 @@
 /src/generated/prisma
 .idea/
 /node_modules/
-.env
 /prisma/views/

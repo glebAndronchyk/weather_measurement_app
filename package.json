@@ -1,0 +1,14 @@
+{
+  "name": "weather_app",
+  "scripts": {
+    "install:client": "cd client && npm i",
+    "install:server": "cd server && npm i",
+    "run:client": "cd client && npm run dev",
+    "run:server": "cd server && npm run regenerate-schema && npm run run",
+    "install": "npx concurrently \"npm run install:client\" \"npm run install:server\"",
+    "run": "npx concurrently \"npm run run:client\" \"npm run run:server\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
