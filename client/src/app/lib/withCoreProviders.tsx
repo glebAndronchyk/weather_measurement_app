@@ -4,7 +4,7 @@ import { QueryClientProvider } from "../query";
 import { APPThemeProvider } from "../theme/APPThemeProvider";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 
-export const withCoreProviders = (comp: FC<unknown>) => {
+export const withCoreProviders = (comp: FC): FC => {
   return (...props: never[]) => (
     <QueryClientProvider>
       <APPThemeProvider>

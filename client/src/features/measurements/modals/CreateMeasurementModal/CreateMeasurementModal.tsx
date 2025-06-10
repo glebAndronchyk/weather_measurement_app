@@ -1,4 +1,4 @@
-import { Box, Button, ClickAwayListener, Modal } from "@mui/material";
+import { Button, ClickAwayListener, Modal } from "@mui/material";
 import {
   CenterContent,
   ModalContent,
@@ -7,13 +7,13 @@ import type { FC } from "react";
 import { modalPool } from "../../../../app/lib/modalPool.tsx";
 import PlusOneOutlined from "@mui/icons-material/PlusOneOutlined";
 import { CreateMeasurementForm } from "../../components/CreateMeasurementForm.tsx";
-import type { CreateMeasurementRequestPayload } from "../../../../app/api/types/CreateMeasurementRequestPayload.ts";
+import type { CreateMeasurementRequestPayloadWithTemporalId } from "../../../../app/api/types/CreateMeasurementRequestPayload.ts";
 
 interface CreateMeasurementModalProps {
   closeModal?: VoidFunction;
   openRelatedModal?: (props: object) => void;
   onCreateMeasurementEntry: (
-    measurement: Omit<CreateMeasurementRequestPayload, "area">,
+    measurement: Omit<CreateMeasurementRequestPayloadWithTemporalId, "area">,
   ) => void;
 }
 
@@ -21,7 +21,7 @@ const CreateMeasurementModalBase: FC<CreateMeasurementModalProps> = (props) => {
   const { closeModal, onCreateMeasurementEntry } = props;
 
   const handleMeasurementCreation = (
-    measurement: Omit<CreateMeasurementRequestPayload, "area">,
+    measurement: Omit<CreateMeasurementRequestPayloadWithTemporalId, "area">,
   ) => {
     onCreateMeasurementEntry(measurement);
     closeModal!();

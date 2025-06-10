@@ -1,5 +1,7 @@
+import type { CreateMeasurementRequestPayloadWithTemporalId } from "../../../../app/api/types/CreateMeasurementRequestPayload.ts";
+
 export class MeasurementsBuffer {
-  private _entries: [] = [];
+  private _entries: CreateMeasurementRequestPayloadWithTemporalId[] = [];
 
   get entries() {
     return this._entries;
@@ -24,12 +26,14 @@ export class MeasurementsBuffer {
     };
   }
 
-  private constructor(entries: []) {
+  private constructor(
+    entries: CreateMeasurementRequestPayloadWithTemporalId[],
+  ) {
     this._entries = entries;
   }
 
-  addEntry(entry: never) {
-    this._entries.push(entry);
+  addEntry(entry: Partial<CreateMeasurementRequestPayloadWithTemporalId>) {
+    this._entries.push(entry as CreateMeasurementRequestPayloadWithTemporalId);
   }
 
   static instantiate() {

@@ -1,6 +1,7 @@
 import type { DISPATCH_MeasurementsMapViewModelSignature } from "./MapControlsViewModel.reducer.ts";
 import type { Location } from "../../../app/api/types/Location.ts";
 import { MeasurementsBuffer } from "./lib/MeasurementsBuffer.ts";
+import type { CreateMeasurementRequestPayloadWithTemporalId } from "../../../app/api/types/CreateMeasurementRequestPayload.ts";
 
 export interface CONTEXT_MapControlsViewModelSignature {
   updateViewModelState: DISPATCH_MeasurementsMapViewModelSignature;
@@ -29,7 +30,7 @@ export type DispatchAction =
     }
   | {
       type: "addNewMeasurement";
-      payload: never;
+      payload: Partial<CreateMeasurementRequestPayloadWithTemporalId>;
     }
   | {
       type: "alignMeasurementPolygon";

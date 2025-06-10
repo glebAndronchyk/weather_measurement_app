@@ -11,7 +11,7 @@ import {
 import { DateTimeField } from "@mui/x-date-pickers";
 import { RenderGenericMetrics } from "./RenderGenericMetrics";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { CreateMeasurementRequestPayload } from "../../../app/api/types/CreateMeasurementRequestPayload.ts";
+import type { CreateMeasurementRequestPayloadWithTemporalId } from "../../../app/api/types/CreateMeasurementRequestPayload.ts";
 import {
   type CreateMeasurementFormSchema,
   createMeasurementPayloadValidation,
@@ -22,7 +22,7 @@ import dayjs from "dayjs";
 
 interface CreateMeasurementFormProps {
   onCreateMeasurementEntry: (
-    measurement: Omit<CreateMeasurementRequestPayload, "area">,
+    measurement: Omit<CreateMeasurementRequestPayloadWithTemporalId, "area">,
   ) => void;
 }
 
@@ -50,7 +50,10 @@ export const CreateMeasurementForm: FC<CreateMeasurementFormProps> = (
   const measurementType = watch("type");
 
   const onSubmit = (data: CreateMeasurementFormSchema) => {
-    onCreateMeasurementEntry(data as never);
+    onCreateMeasurementEntry({
+      ...data,
+      temporalId: crypto.randomUUID(),
+    } as never as Omit<CreateMeasurementRequestPayloadWithTemporalId, "area">);
   };
 
   // todo: fix date

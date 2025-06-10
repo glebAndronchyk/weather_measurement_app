@@ -9,3 +9,8 @@ export interface CreateMeasurementRequestPayload {
   timestamp: string;
   genericMetrics: string;
 }
+
+export type CreateMeasurementRequestPayloadWithTemporalId =
+  CreateMeasurementRequestPayload & {
+    temporalId: string;
+  };
