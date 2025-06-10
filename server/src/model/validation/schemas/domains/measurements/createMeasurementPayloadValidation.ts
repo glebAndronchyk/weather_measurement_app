@@ -8,19 +8,13 @@ export const createMeasurementPayloadValidation = z.object({
     unit: z.enum(UNITS),
     device_id: z.number(),
     area: z.record(z.any(), z.any()).transform((val) => JSON.stringify(val)),
-    timestamp: dateString,
+    timestamp: z.string(),
     genericMetrics: z.record(z.any(), z.any())
 }).refine(
     (obj) => {
         const metricsSchema = typeMetricsValidationSchema[obj.type];
 
       if (!metricsSchema) return false;
-
-      console.log({
-          obj,
-          metricsSchema,
-      })
-
       const metricParseResult = metricsSchema.safeParse(obj.genericMetrics);
       return metricParseResult.success;
     },

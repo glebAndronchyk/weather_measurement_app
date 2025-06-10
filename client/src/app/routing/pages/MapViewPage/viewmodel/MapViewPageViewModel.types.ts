@@ -26,6 +26,10 @@ export interface MapViewPageViewModelContextSignature {
     FrustumMeasurementQueryPayload
   >;
 
+  mapMode: 'normal' | 'creator';
+  enterCreatorMode(): void;
+  enterNormalMode(): void;
+
   bind: (key: QueryPayloadKeys, value: unknown) => void;
   obtainQueryPayloadEntry: <K extends QueryPayloadKeys = QueryPayloadKeys>(
     key: K,

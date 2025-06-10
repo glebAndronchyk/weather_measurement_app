@@ -11,7 +11,7 @@ const CreateLocationModalBase = (props) => {
   const { closeModal } = props;
 
   return (
-    <Modal open onClose={() => console.log(1)}>
+    <Modal open onClose={closeModal}>
       <CenterContent>
         <ClickAwayListener onClickAway={closeModal}>
           <ModalContent>
@@ -23,7 +23,7 @@ const CreateLocationModalBase = (props) => {
   );
 };
 
-export const AddLocationButton = (props) => {
+const AddLocationButton = (props) => {
   const { openRelatedModal } = props;
 
   return (

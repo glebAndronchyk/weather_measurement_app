@@ -13,6 +13,7 @@ import type {
 export const MapViewPageViewModelProvider: FC<PropsWithChildren> = (props) => {
   const { children } = props;
 
+  const [mapMode, setMode]  = useState<'normal' | 'creator'>('normal');
   const [_queriesPayload, _setQueriesPayload] = useState<QueryPayload>({
     measurementsFilter: new URLSearchParams(),
     measurementsLookupType: "area",
@@ -42,6 +43,14 @@ export const MapViewPageViewModelProvider: FC<PropsWithChildren> = (props) => {
       getAreaLocation(params),
   });
 
+  const enterCreatorMode = () => {
+    setMode('creator');
+  }
+
+  const enterNormalMode = () => {
+    setMode('normal');
+  }
+
   const obtainQueryPayloadEntry = <K extends QueryPayloadKeys>(
     key: K,
   ): QueryPayload[K] => {
@@ -67,12 +76,15 @@ export const MapViewPageViewModelProvider: FC<PropsWithChildren> = (props) => {
   return (
     <MapViewPageViewModelContext.Provider
       value={{
+        enterCreatorMode,
+        enterNormalMode,
         paginatedMeasurementsQuery,
         measurementsQuery,
         devicesQuery,
         locationsQuery,
         bind,
         obtainQueryPayloadEntry,
+        mapMode,
       }}
     >
       {children}

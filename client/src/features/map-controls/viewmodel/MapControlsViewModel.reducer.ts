@@ -3,6 +3,7 @@ import type {
   DispatchAction,
 } from "./MapControlsViewModel.types.ts";
 import type { useReducer } from "react";
+import { MeasurementsBuffer } from "./lib/MeasurementsBuffer.ts";
 
 export const reducer = (
   state: STATE_MapControlsViewModelSignature,
@@ -24,6 +25,25 @@ export const reducer = (
         ...state,
         selectedLocation: action.payload,
       };
+    case "addNewMeasurement": {
+      state.measurementsBuffer.addEntry(action.payload);
+      return {
+        ...state,
+        measurementsBuffer: MeasurementsBuffer.clone(state.measurementsBuffer),
+      };
+    }
+    case "alignMeasurementPolygon": {
+      const lastEntryControls = state.measurementsBuffer.last;
+
+      if (!lastEntryControls) return state;
+
+      lastEntryControls.applyPolygon(action.payload);
+
+      return {
+        ...state,
+        measurementsBuffer: MeasurementsBuffer.clone(state.measurementsBuffer),
+      };
+    }
   }
 };
 

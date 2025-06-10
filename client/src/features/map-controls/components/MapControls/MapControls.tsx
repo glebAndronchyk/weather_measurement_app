@@ -2,6 +2,7 @@ import { Stack } from "@mui/material";
 import { rem } from "../../../../lib/css/rem.ts";
 import { MeasurementFilters } from "../MeasurementFilters";
 import { LocationControls } from "../LocationControls";
+import { MeasurementsCreator } from "../MeasurementsCreator";
 
 export const MapControls = () => {
   // todo: remove border
@@ -16,9 +17,7 @@ export const MapControls = () => {
     >
       <MeasurementFilters />
       <LocationControls />
-      {/*<LocationSearchForm />*/}
-      {/*<MeasurementsTable />*/}
-      {/*<MeasurementsCreator />*/}
+      <MeasurementsCreator />
     </Stack>
   );
 };

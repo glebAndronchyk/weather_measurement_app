@@ -18,24 +18,32 @@ const createCustomPresentationLayer = () => {
   return { root: createRoot(container), clearDOM };
 };
 
-export const modalPool = (
+export const modalPool = <
+  TRoot extends { closeModal?: VoidFunction },
+  TTrigger extends { openRelatedModal?: VoidFunction; modalKey?: string },
+>(
   key: string,
-  component: FC<{ closeModal: VoidFunction }>,
-  trigger: FC<{ openRelatedModal: VoidFunction; modalKey: string }>,
+  component: FC<TRoot>,
+  trigger: FC<TTrigger>,
 ) => {
   modalsCache[key] = component;
 
-  const open = () => {
+  const open = (props?: object) => {
     const { root, clearDOM } = createCustomPresentationLayer();
     const closeModalHandler = () => {
       root.unmount();
       clearDOM();
     };
 
-    const Component = withCoreProviders(modalsCache[key]);
+    const Component = withCoreProviders(modalsCache[key]) as FC<
+      Record<string, unknown>
+    >;
 
-    root.render(<Component closeModal={closeModalHandler} />);
+    root.render(
+      <Component closeModal={closeModalHandler as never} {...props} />,
+    );
   };
 
-  return () => trigger({ openRelatedModal: open, modalKey: key });
+  return (props: TTrigger) =>
+    trigger({ openRelatedModal: open, modalKey: key, ...props });
 };
