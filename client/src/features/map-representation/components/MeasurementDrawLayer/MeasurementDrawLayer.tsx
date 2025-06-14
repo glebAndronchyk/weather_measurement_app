@@ -1,18 +1,19 @@
 import { MapPolygonDraw } from "../../../../shared/components/map/MapPolygonDraw";
 import { useMapViewPageViewModel } from "../../../../app/routing/pages/MapViewPage/viewmodel";
+import { DrawnEvent } from "../../../../shared/lib/events/DrawnEvent.ts";
 
 export const MeasurementDrawLayer = () => {
-  const { mapMode, enterNormalMode } = useMapViewPageViewModel();
+  const { measurementsDrawLayerReference, mapEventBus } =
+    useMapViewPageViewModel();
 
-  if (mapMode === "normal") return null;
-
-  const onUpdate = (e: { features: object[] }) => {
-    enterNormalMode();
+  const handleSomethingDrawn = (e: { features: object[] }) => {
+    mapEventBus.dispatchEvent(new DrawnEvent(e));
   };
 
   return (
     <MapPolygonDraw
-      onCreate={onUpdate}
+      drawRef={measurementsDrawLayerReference}
+      onCreate={handleSomethingDrawn}
       displayControlsDefault={false}
       position="top-right"
       controls={{

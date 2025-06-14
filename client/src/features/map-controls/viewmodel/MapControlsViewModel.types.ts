@@ -35,4 +35,7 @@ export type DispatchAction =
   | {
       type: "alignMeasurementPolygon";
       payload: object;
+    }
+  | {
+      type: "clearMeasurementBuffer";
     };

@@ -1,68 +1,37 @@
 import { SectionAccordion } from "../SectionAccordion";
 import { useMapControlsViewModel } from "../../viewmodel";
 import { useMapViewPageViewModel } from "../../../../app/routing/pages/MapViewPage/viewmodel";
-import { useEffect, useMemo } from "react";
 import { CreateMeasurementModalTrigger } from "../../../measurements";
-import { DataGrid } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
-import { objectToColumnDefinition } from "../../../../shared/lib/mui";
 import type { CreateMeasurementRequestPayloadWithTemporalId } from "../../../../app/api/types/CreateMeasurementRequestPayload.ts";
-
-const getObjectKeysEntries = (obj: object): string[][] => {
-  const keys = Object.keys(obj);
-  const entries = keys.flatMap((key) =>
-    typeof obj[key] === "object"
-      ? getObjectKeysEntries(obj[key])
-      : [[key, key]],
-  );
-
-  return entries;
-};
-
-const createKeysObject = (data: object[]) => {
-  console.log(data);
-  return data.reduce((entry, currentValue) => {
-    const flatEntries = getObjectKeysEntries(currentValue);
-
-    return {
-      ...Object.fromEntries(flatEntries),
-      ...entry,
-    };
-  }, {});
-};
-
-const oneLevelDeep = (data: object) => {
-  let result = {};
-
-  for (const val in data) {
-    if (typeof data[val] === "object") {
-      result = { ...result, ...oneLevelDeep(data[val]) };
-    } else {
-      result[val] = data[val];
-    }
-  }
-
-  return result;
-};
+import { useDrawerModeToggle } from "./hooks/useDrawerModeToggle.ts";
+import { useAlignMeasurementPolygon } from "./hooks/useAlignMeasurementPolygon.ts";
+import { MeasurementBufferDataGrid } from "../MeasurementBufferDataGrid";
+import { useMutation } from "@tanstack/react-query";
+import { postMeasurements } from "../../../../app/api/fetchers/postMeasurements.ts";
 
 export const MeasurementsCreator = () => {
   const {
     state: { measurementsBuffer },
     updateViewModelState,
   } = useMapControlsViewModel();
-  const { enterCreatorMode, enterNormalMode, mapMode, drawLayerReference } =
-    useMapViewPageViewModel();
+  const { measurementsDrawLayerReference } = useMapViewPageViewModel();
 
-  useEffect(() => {
-    if (measurementsBuffer.isSomethingCreating) {
-      enterCreatorMode();
-    } else {
-      enterNormalMode();
-    }
-  }, [measurementsBuffer.isSomethingCreating]);
+  useDrawerModeToggle();
+  useAlignMeasurementPolygon();
 
-  const handleSave = () => {
-    enterNormalMode();
+  const { mutateAsync: registerMeasurements } = useMutation({
+    mutationKey: ["measurements"],
+    mutationFn: (data: CreateMeasurementRequestPayloadWithTemporalId[]) =>
+      postMeasurements(data),
+  });
+
+  const handleSave = async () => {
+    await registerMeasurements(measurementsBuffer.entries);
+    measurementsDrawLayerReference.current!.deleteAll();
+    updateViewModelState({
+      type: "clearMeasurementBuffer",
+    });
   };
 
   const handleMeasurementCreation = (
@@ -74,32 +43,9 @@ export const MeasurementsCreator = () => {
     });
   };
 
-  const { columns, rows } = useMemo(() => {
-    const rows = measurementsBuffer.entries.map((entry) =>
-      oneLevelDeep(entry),
-    ) as Pick<CreateMeasurementRequestPayloadWithTemporalId, "temporalId">[];
-    const columns = objectToColumnDefinition(createKeysObject(rows));
-
-    return {
-      columns,
-      rows,
-    };
-  }, [measurementsBuffer]);
-
   return (
     <SectionAccordion title="Measurements creator">
-      {measurementsBuffer.hasEntries && (
-        <DataGrid
-          getRowId={(
-            row: Pick<
-              CreateMeasurementRequestPayloadWithTemporalId,
-              "temporalId"
-            >,
-          ) => row.temporalId}
-          columns={columns}
-          rows={rows}
-        />
-      )}
+      {measurementsBuffer.hasEntries && <MeasurementBufferDataGrid />}
       <CreateMeasurementModalTrigger
         disabled={measurementsBuffer.isSomethingCreating}
         onCreateMeasurementEntry={handleMeasurementCreation}

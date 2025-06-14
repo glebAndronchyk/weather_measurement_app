@@ -40,7 +40,7 @@ export const CreateMeasurementForm: FC<CreateMeasurementFormProps> = (
     defaultValues: {
       type: "",
       unit: "",
-      timestamp: "",
+      timestamp: dayjs().toISOString(),
       device_id: "",
       genericMetrics: {},
     },
@@ -135,7 +135,7 @@ export const CreateMeasurementForm: FC<CreateMeasurementFormProps> = (
               error={false}
               value={value ? dayjs(value) : dayjs()}
               onChange={(data) => {
-                onChange(data!.format("YYYY-mm-DD"));
+                onChange(data!.toISOString());
               }}
               label="Timestamp"
             />

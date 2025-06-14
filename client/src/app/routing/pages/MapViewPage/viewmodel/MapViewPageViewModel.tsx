@@ -1,11 +1,18 @@
 import { MapViewPageViewModelContext } from "./MapViewPageViewModel.context.ts";
-import { type FC, type PropsWithChildren, useState } from "react";
+import {
+  type FC,
+  type PropsWithChildren,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useMutation } from "@tanstack/react-query";
 import { getAreaLocation } from "../../../../api/fetchers/getAreaLocation.ts";
 import type { FrustumMeasurementQueryPayload } from "../../../../api/types/FrustumMeasurementQueryPayload.ts";
 import { getPaginatedLocation } from "../../../../api/fetchers/getPaginatedLocation.ts";
 import type { MeasurementQueryPayloadSupertype } from "../../../../api/types/MeasurementQueryPayloadSupertype.ts";
 import type {
+  DrawLayerControls,
   QueryPayload,
   QueryPayloadKeys,
 } from "./MapViewPageViewModel.types.ts";
@@ -13,11 +20,12 @@ import type {
 export const MapViewPageViewModelProvider: FC<PropsWithChildren> = (props) => {
   const { children } = props;
 
-  const [mapMode, setMode]  = useState<'normal' | 'creator'>('normal');
   const [_queriesPayload, _setQueriesPayload] = useState<QueryPayload>({
     measurementsFilter: new URLSearchParams(),
     measurementsLookupType: "area",
   });
+  const measurementsDrawLayerReference = useRef<DrawLayerControls | null>(null);
+  const mapEventBus = useMemo(() => new EventTarget(), []);
 
   const measurementsQuery = useMutation({
     mutationKey: ["measurements"],
@@ -42,14 +50,6 @@ export const MapViewPageViewModelProvider: FC<PropsWithChildren> = (props) => {
     mutationFn: (params: FrustumMeasurementQueryPayload) =>
       getAreaLocation(params),
   });
-
-  const enterCreatorMode = () => {
-    setMode('creator');
-  }
-
-  const enterNormalMode = () => {
-    setMode('normal');
-  }
 
   const obtainQueryPayloadEntry = <K extends QueryPayloadKeys>(
     key: K,
@@ -76,15 +76,14 @@ export const MapViewPageViewModelProvider: FC<PropsWithChildren> = (props) => {
   return (
     <MapViewPageViewModelContext.Provider
       value={{
-        enterCreatorMode,
-        enterNormalMode,
+        measurementsDrawLayerReference,
         paginatedMeasurementsQuery,
         measurementsQuery,
         devicesQuery,
         locationsQuery,
         bind,
         obtainQueryPayloadEntry,
-        mapMode,
+        mapEventBus,
       }}
     >
       {children}

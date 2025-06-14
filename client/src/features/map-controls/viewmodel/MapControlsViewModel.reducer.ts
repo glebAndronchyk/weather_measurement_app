@@ -44,6 +44,14 @@ export const reducer = (
         measurementsBuffer: MeasurementsBuffer.clone(state.measurementsBuffer),
       };
     }
+    case "clearMeasurementBuffer": {
+      state.measurementsBuffer.clear();
+
+      return {
+        ...state,
+        measurementsBuffer: MeasurementsBuffer.clone(state.measurementsBuffer),
+      };
+    }
   }
 };
 

@@ -15,9 +15,9 @@ export interface PointInputProps {
 const getCoordinateIndexByType = (type: "lat" | "lon" | "alt") => {
   switch (type) {
     case "lat":
-      return 0;
-    case "lon":
       return 1;
+    case "lon":
+      return 0;
     default:
       return 2;
   }
@@ -40,15 +40,15 @@ export const PointInput: FC<PointInputProps> = (props) => {
     <Stack gap={rem(12)} sx={containerSx} flexDirection="row">
       <TextField
         type="number"
-        label="LAT"
+        label="LON"
         value={coordinates?.[0] || ""}
-        onChange={handleCoordinateChange("lat")}
+        onChange={handleCoordinateChange("lon")}
       />
       <TextField
         type="number"
-        label="LNG"
+        label="LAT"
         value={coordinates?.[1] || ""}
-        onChange={handleCoordinateChange("lon")}
+        onChange={handleCoordinateChange("lat")}
       />
       <TextField
         type="number"

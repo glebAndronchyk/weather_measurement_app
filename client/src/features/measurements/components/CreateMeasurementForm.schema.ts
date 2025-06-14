@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { MEASUREMENT_TYPE } from "../../../app/api/enums/MEASUREMENT_TYPE.ts";
-import { decimalString, digitString } from "../../../lib/validation/zod";
+import { digitString } from "../../../lib/validation/zod";
 import { UNITS } from "../../../shared/constants/UNITS.ts";
 
 export const typeMetricsValidationSchema: Partial<
   Record<keyof typeof MEASUREMENT_TYPE, z.Schema>
 > = {
   [MEASUREMENT_TYPE.TEMPERATURE_MEASUREMENT]: z.object({
-    temperature: decimalString,
+    temperature: z.number(),
   }),
   [MEASUREMENT_TYPE.WIND_MEASUREMENT]: z.object({
     speed: z.number(),

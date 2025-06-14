@@ -36,6 +36,10 @@ export class MeasurementsBuffer {
     this._entries.push(entry as CreateMeasurementRequestPayloadWithTemporalId);
   }
 
+  clear() {
+    this._entries = [];
+  }
+
   static instantiate() {
     return new this([]);
   }

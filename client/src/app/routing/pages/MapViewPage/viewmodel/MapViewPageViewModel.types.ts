@@ -3,6 +3,7 @@ import type { FrustumMeasurementQueryPayload } from "../../../../api/types/Frust
 import type { AreaMeasurements } from "../../../../api/fetchers/getAreaLocation.ts";
 import type { MeasurementQueryPayloadSupertype } from "../../../../api/types/MeasurementQueryPayloadSupertype.ts";
 import type { PaginatedMeasurements } from "../../../../api/fetchers/getPaginatedLocation.ts";
+import type { RefObject } from "react";
 
 export interface MapViewPageViewModelContextSignature {
   paginatedMeasurementsQuery: UseMutationResult<
@@ -26,14 +27,19 @@ export interface MapViewPageViewModelContextSignature {
     FrustumMeasurementQueryPayload
   >;
 
-  mapMode: 'normal' | 'creator';
-  enterCreatorMode(): void;
-  enterNormalMode(): void;
+  measurementsDrawLayerReference: RefObject<DrawLayerControls | null>;
+  mapEventBus: EventTarget;
 
   bind: (key: QueryPayloadKeys, value: unknown) => void;
   obtainQueryPayloadEntry: <K extends QueryPayloadKeys = QueryPayloadKeys>(
     key: K,
   ) => QueryPayload[K];
+}
+
+export interface DrawLayerControls {
+  deleteAll: () => void;
+  changeMode: (mode: string, options?: object) => void;
+  getAll: () => object;
 }
 
 export interface QueryPayload {
