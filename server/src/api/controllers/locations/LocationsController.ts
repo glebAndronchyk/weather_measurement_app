@@ -14,6 +14,7 @@ import {idSchema} from "../../../model/validation/schemas/index.js";
 import {locationsControllerMapper, LocationsControllerMapperSignature} from "./LocationsController.mapper.js";
 import {MeasurementPayloadSpotted} from "../../../model/domain/measurements/MeasurementQueryPayloadPaginated.js";
 import {CreateLocationDTO} from "../../../model/dto/CreateLocationDTO.js";
+import {OnlyQueryRequest} from "../../../model/controllers/Request.js";
 
 export class LocationsController extends ControllerBase<LocationsControllerMapperSignature> {
     private locationsRepository: LocationsRepository;
@@ -39,7 +40,10 @@ export class LocationsController extends ControllerBase<LocationsControllerMappe
     }
 
     _POST_LOCATION() {
-        const query: RequestHandler<{}, {}, CreateLocationDTO, {}> = async (req, res) => {
+        const query: RequestHandler<{}, {}, CreateLocationDTO, {}> = async (
+            req,
+            res
+        ) => {
             const body = req.body;
 
             const id = await this.locationsRepository.createLocation(body);
@@ -56,7 +60,10 @@ export class LocationsController extends ControllerBase<LocationsControllerMappe
     }
 
     _GET_LATEST_LOCATION_MEASUREMENT = () => {
-        const query: RequestHandler<IdParams, {}, {}, MeasurementPayloadSpotted> = async (req, res) => {
+        const query: RequestHandler<IdParams, {}, {}, MeasurementPayloadSpotted> = async (
+            req,
+            res
+        ) => {
             const payload = req.query;
             const id = req.params.id;
             const measurements = await this.locationsRepository.getLatestMeasurements(id, payload);
@@ -82,7 +89,10 @@ export class LocationsController extends ControllerBase<LocationsControllerMappe
     }
 
     _GET_LOCATION_WITH_MEASUREMENTS = () => {
-        const query: RequestHandler<IdParams, {}, {}, LocationsFilteringQueryPayload> = async (req, res) => {
+        const query: RequestHandler<IdParams, {}, {}, LocationsFilteringQueryPayload> = async (
+            req,
+            res
+        ) => {
             const payload = req.query;
             const id = req.params.id;
             const measurements = await this.locationsRepository.getLocationWithMeasurements(id, payload);
@@ -107,7 +117,10 @@ export class LocationsController extends ControllerBase<LocationsControllerMappe
     }
 
     _GET() {
-        const query: RequestHandler<{}, {}, {}, LocationsFilteringQueryPayload> = async (req, res) => {
+        const query: OnlyQueryRequest<LocationsFilteringQueryPayload> = async (
+            req,
+            res
+        ) => {
             const query = req.query;
             const locations = await this.locationsRepository.getAllLocations(query);
             const response = new BaseResponse().setData(locations).toDTO();
@@ -115,7 +128,13 @@ export class LocationsController extends ControllerBase<LocationsControllerMappe
             res.status(EStatusCode.SUCCESS).json(response);
         };
 
-        this._router.get('/', internalServerErrorDecorator(queryValidationDecorator(query, locationsQueryPayloadValidation)));
+        this._router.get('/',
+            internalServerErrorDecorator(
+                queryValidationDecorator(
+                    query,
+                    locationsQueryPayloadValidation)
+            )
+        );
     }
 }
 

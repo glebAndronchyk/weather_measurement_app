@@ -114,7 +114,7 @@ model DeviceHealthLog {
 }
 
 model FogLevelMeasurement {
-  id               Int                     @id
+  id               Int                     @id @default(autoincrement())
   device_id        Int
   timestamp        DateTime                @db.Date
   area             Unsupported("geometry")
@@ -125,7 +125,7 @@ model FogLevelMeasurement {
 }
 
 model WindMeasurement {
-  id               Int                     @id
+  id               Int                     @id @default(autoincrement())
   device_id        Int
   timestamp        DateTime                @db.Date
   area             Unsupported("geometry")
@@ -136,11 +136,14 @@ model WindMeasurement {
   Device           Device                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "device_id")
 }
 
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model Location {
   id       Int                     @id @default(autoincrement())
   type     String
   metadata Json
   point    Unsupported("geometry")
+
+  @@index([metadata], map: "idx_gin_metadata", type: Gin)
 }
 
 view geojson_measurement {
@@ -278,4 +281,7 @@ enum UNITS {
   CELCIUS
   FAHRENHEIT
   MPS
+  CELSIUS
+  KMH
+  G_M3
 }

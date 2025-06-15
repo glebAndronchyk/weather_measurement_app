@@ -21,7 +21,10 @@ import {DatabaseAllMeasurementsDTO} from "../../model/dto/DatabaseAllMeasurement
 export class LocationsRepository {
     constructor(private connection: PrismaClient) {}
 
-    async getLatestMeasurements(id: IdParams['id'], obj: MeasurementPayloadSpotted) {
+    async getLatestMeasurements(
+        id: IdParams['id'],
+        obj: MeasurementPayloadSpotted
+    ) {
         let tablesToQuery = [obj.type.replace('geojson_', '')];
 
         if (obj.type === EGeojsonMeasurementType.Measurement) {
@@ -32,7 +35,10 @@ export class LocationsRepository {
         return this.connection.$queryRawUnsafe<DatabaseSpottedMeasurementsDTO>(RAW_queryLatestLocationMeasurements(id, obj, tablesToQuery));
     }
 
-    getLocationWithMeasurements(id: number | string, obj: MeasurementQueryPayloadLocationBased) {
+    getLocationWithMeasurements(
+        id: number | string,
+        obj: MeasurementQueryPayloadLocationBased
+    ) {
         return this.connection.$queryRawUnsafe<DatabaseAllMeasurementsDTO>(RAW_queryLocationMeasurements(id, obj));
     }
 

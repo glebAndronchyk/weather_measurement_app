@@ -24,6 +24,9 @@ import {bodyValidationDecorator} from "../../../../lib/decorators/controllers/bo
 import {
     createManyMeasurementsPayloadValidation,
 } from "../../../../model/validation/schemas/domains/measurements/createMeasurementPayloadValidation.js";
+import {OnlyBodyRequest, OnlyQueryRequest} from "../../../../model/controllers/Request.js";
+
+
 
 export class MeasurementsBaseController extends ControllerBase<MeasurementsBaseControllerMapperSignature> {
    private _measurementsBaseRepository: MeasurementsBaseRepository;
@@ -48,7 +51,10 @@ export class MeasurementsBaseController extends ControllerBase<MeasurementsBaseC
     }
 
     _POST_MEASUREMENTS() {
-        const query: RequestHandler<{}, {}, { items: CreateMeasurementDBPayload[] }, {}> = async (req, res) => {
+        const query:OnlyBodyRequest<{ items: CreateMeasurementDBPayload[] }> = async (
+            req,
+            res
+        ) => {
            const body = req.body;
 
            await this._measurementsBaseRepository.createManyMeasurements(body.items);
@@ -68,7 +74,10 @@ export class MeasurementsBaseController extends ControllerBase<MeasurementsBaseC
     }
 
     _GET_BY_AREA() {
-        const query: RequestHandler<{}, {}, {}, MeasurementQueryPayloadSupertype> = async (req, res) => {
+        const query:OnlyQueryRequest<MeasurementQueryPayloadSupertype> = async (
+            req,
+            res
+        ) => {
             const query = req.query;
             const measurements = await this._measurementsBaseRepository.getMeasurements(
                 this._mapper.mapSingleMeasurementToHaveDBTableType(query)
@@ -79,11 +88,20 @@ export class MeasurementsBaseController extends ControllerBase<MeasurementsBaseC
             res.status(EStatusCode.SUCCESS).json(response);
         };
 
-        this._router.get('*area', internalServerErrorDecorator(queryValidationDecorator(query, measurementQueryPayloadGeographyValidation)));
+        this._router.get('*area',
+            internalServerErrorDecorator(
+                queryValidationDecorator(
+                    query,
+                    measurementQueryPayloadGeographyValidation)
+            )
+        );
     }
 
     _GET() {
-        const query: RequestHandler<{}, {}, {}, MeasurementQueryPayloadPaginated> = async (req, res) => {
+        const query:OnlyQueryRequest<MeasurementQueryPayloadSupertype> = async (
+            req,
+            res
+        ) => {
             const query = req.query;
             const measurements = await this._measurementsBaseRepository.getMeasurements(
                 this._mapper.mapSingleMeasurementToHaveDBTableType(query)
@@ -94,7 +112,14 @@ export class MeasurementsBaseController extends ControllerBase<MeasurementsBaseC
             res.status(EStatusCode.SUCCESS).json(response);
         };
 
-        this._router.get('/', internalServerErrorDecorator(queryValidationDecorator(query, measurementQueryPayloadWithPaginationValidation)));
+        this._router.get('/',
+            internalServerErrorDecorator(
+                queryValidationDecorator(
+                    query,
+                    measurementQueryPayloadWithPaginationValidation
+                )
+            )
+        );
     }
 }
 

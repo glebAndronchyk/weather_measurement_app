@@ -37,7 +37,10 @@ export class VendorsController extends ControllerBase<never> {
     }
 
     private _PATCH() {
-        const query: RequestHandler<{ id: number }, {}, Partial<NewVendorPayload>> = async (req, res) => {
+        const query: RequestHandler<{ id: number }, {}, Partial<NewVendorPayload>> = async (
+            req,
+            res
+        ) => {
             const vendorPayload = req.body;
             const vendorId = req.params.id;
             await this._vendorsRepository.updateVendor(vendorId, vendorPayload);
@@ -60,7 +63,10 @@ export class VendorsController extends ControllerBase<never> {
     }
 
     private _POST() {
-        const query: RequestHandler<{}, {}, NewVendorPayload> = async (req, res) => {
+        const query: RequestHandler<{}, {}, NewVendorPayload> = async (
+            req,
+           res
+        ) => {
             const vendorPayload = req.body;
             await this._vendorsRepository.createVendor(vendorPayload);
             const response = new BaseResponse();
@@ -68,13 +74,22 @@ export class VendorsController extends ControllerBase<never> {
             res.status(EStatusCode.SUCCESS).json(response);
         };
 
-        const decoratedQuery =  internalServerErrorDecorator(bodyValidationDecorator(query, newVendorBodyValidation));
+        const decoratedQuery =
+            internalServerErrorDecorator(
+                bodyValidationDecorator(
+                    query,
+                    newVendorBodyValidation
+                )
+            );
 
         this._router.post('/', decoratedQuery);
     }
 
     private _GET_SINGLE() {
-        const query: RequestHandler<{ id: number }> = async (req, res) => {
+        const query: RequestHandler<{ id: number }> = async (
+            req,
+            res
+        ) => {
             const vendorId = req.params.id;
             const vendor = await this._vendorsRepository.getVendor(vendorId);
             const response = new BaseResponse().setData(vendor).toDTO();
@@ -82,13 +97,22 @@ export class VendorsController extends ControllerBase<never> {
             res.status(EStatusCode.SUCCESS).json(response)
         };
 
-        const decoratedQuery =  internalServerErrorDecorator(paramsValidationDecorator(query, idSchema));
+        const decoratedQuery =
+            internalServerErrorDecorator(
+                paramsValidationDecorator(
+                    query,
+                    idSchema
+                )
+            );
 
         this._router.get('/:id', decoratedQuery);
     }
 
     private _GET_ALL() {
-        const query: RequestHandler<{}, {}, {}, PaginationParams> = async (req, res) => {
+        const query: RequestHandler<{}, {}, {}, PaginationParams> = async (
+            req,
+            res
+        ) => {
             const pagination = req.query;
             const vendors = await this._vendorsRepository.getAllVendors(pagination);
             const response = new BaseResponse().setData(vendors).toDTO();
@@ -96,7 +120,13 @@ export class VendorsController extends ControllerBase<never> {
             res.status(EStatusCode.SUCCESS).json(response);
         };
 
-        this._router.get('/', internalServerErrorDecorator(queryValidationDecorator(query, paginationParamsSchema)));
+        this._router.get('/',
+            internalServerErrorDecorator(
+                queryValidationDecorator(
+                    query,
+                    paginationParamsSchema)
+            )
+        );
     }
 }
 

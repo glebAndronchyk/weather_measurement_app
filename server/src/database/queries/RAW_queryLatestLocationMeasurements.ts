@@ -16,11 +16,11 @@ export const RAW_queryLatestLocationMeasurements = (id: IdParams['id'], obj: Mea
                 ST_3DIntersects(
                         ST_Buffer
                         (
-                                l.point,
+                                ST_Transform(l.point, 3857),
                                 ${obj.within},
                                 'quad_segs=8'
                         ),
-                        m.area
+                        ST_Transform(m.area, 3857)
                     )
                 )
             WHERE l.id = ${id}
