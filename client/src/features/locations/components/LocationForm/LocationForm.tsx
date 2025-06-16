@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import type { PostLocationDTO } from "../../../../app/api/types/PostLocationDTO.ts";
 import { postLocation } from "../../../../app/api/fetchers/postLocation.ts";
 import { PointInput } from "../../../../shared/components/PointInput";
+import type { Coordinates } from "../../../../shared/types/Coordinates.ts";
 
 export const LocationForm = () => {
   const {
@@ -38,7 +39,9 @@ export const LocationForm = () => {
   const onSubmit = (data: LocationFormValidationSchema) => {
     mutate({
       metadata: data.locationMetadata,
-      point: data.locationCenter,
+      point: data.locationCenter.map((entry) =>
+        String(entry),
+      ) as Coordinates<string>,
       type: data.locationType,
     });
   };

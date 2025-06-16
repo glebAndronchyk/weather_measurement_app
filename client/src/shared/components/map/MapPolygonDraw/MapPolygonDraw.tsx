@@ -5,7 +5,7 @@ import { type RefObject, useImperativeHandle, useMemo } from "react";
 import type { DrawLayerControls } from "../../../../app/routing/pages/MapViewPage/viewmodel/MapViewPageViewModel.types.ts";
 import StaticMode from "@mapbox/mapbox-gl-draw-static-mode";
 
-MapboxDraw.modes.static = StaticMode;
+(MapboxDraw.modes as any).static = StaticMode;
 
 interface MapPolygonDraw extends Omit<MapboxDrawOptions, "defaultMode"> {
   controls?: Omit<MapboxDrawOptions["controls"], "polygon">;
@@ -22,7 +22,7 @@ export const MapPolygonDraw = (props: MapPolygonDraw) => {
   const layer = useMemo(() => {
     return new MapboxDraw({
       ...props,
-      modes: MapboxDraw.modes,
+      modes: MapboxDraw.modes as any,
       defaultMode: "draw_polygon",
       controls: {
         ...props.controls,

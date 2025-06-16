@@ -35,7 +35,7 @@ export const MeasurementsCreator = () => {
   };
 
   const handleMeasurementCreation = (
-    measurement: CreateMeasurementRequestPayloadWithTemporalId,
+    measurement: Omit<CreateMeasurementRequestPayloadWithTemporalId, "area">,
   ) => {
     updateViewModelState({
       type: "addNewMeasurement",

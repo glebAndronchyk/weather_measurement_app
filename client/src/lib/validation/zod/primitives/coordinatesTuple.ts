@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { decimalString, digitString } from "./digitString.js";
+import { decimalString } from "./digitString.js";
 
 export const coordinatesTuple = z.tuple([
   decimalString,

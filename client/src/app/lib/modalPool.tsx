@@ -20,7 +20,7 @@ const createCustomPresentationLayer = () => {
 
 export const modalPool = <
   TRoot extends { closeModal?: VoidFunction },
-  TTrigger extends { openRelatedModal?: VoidFunction; modalKey?: string },
+  TTrigger extends Record<string, any>,
 >(
   key: string,
   component: FC<TRoot>,
@@ -44,6 +44,7 @@ export const modalPool = <
     );
   };
 
-  return (props: TTrigger) =>
-    trigger({ openRelatedModal: open, modalKey: key, ...props });
+  return (
+    props: TTrigger & { openRelatedModal?: VoidFunction; modalKey?: string },
+  ) => trigger({ openRelatedModal: open, modalKey: key, ...props });
 };
