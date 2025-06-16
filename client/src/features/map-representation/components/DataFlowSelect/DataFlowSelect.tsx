@@ -45,7 +45,8 @@ export const DataFlowSelect: FC<DataFlowSelectProps> = (props) => {
       items={items}
       sx={{
         ...sx,
-        bgcolor: "white",
+        borderRadius: 0,
+        bgcolor: "white !important",
       }}
     />
   );
