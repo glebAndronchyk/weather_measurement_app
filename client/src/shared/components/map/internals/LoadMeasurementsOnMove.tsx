@@ -6,7 +6,7 @@ import { useMeasurementMapViewModel } from "../../../../features/map-representat
 
 export const LoadMeasurementsOnMove = () => {
   const { current } = useMap();
-  const { measurementsQuery, obtainQueryPayloadEntry } =
+  const { setMeasurementsDynamicParams, obtainQueryPayloadEntry } =
     useMapViewPageViewModel();
   const {
     state: { dataFlow },
@@ -19,7 +19,7 @@ export const LoadMeasurementsOnMove = () => {
       current: current || null,
     },
     (ltc, rbc) => {
-      measurementsQuery.mutate({
+      setMeasurementsDynamicParams({
         type: dataFlow,
         ltc,
         rbc,

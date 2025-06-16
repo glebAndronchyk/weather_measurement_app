@@ -1,10 +1,10 @@
 import axios from "axios";
-import type { FrustumMeasurementQueryPayload } from "../types/FrustumMeasurementQueryPayload.ts";
 import type { BaseResponse } from "../types/BaseResponse.ts";
 import type { MeasurementEntry } from "../types/MeasurementEntry.ts";
+import type { MeasurementQueryPayloadSupertype } from "../types/MeasurementQueryPayloadSupertype.ts";
 
 export const getAreaLocation = async (
-  args: FrustumMeasurementQueryPayload,
+  args: MeasurementQueryPayloadSupertype,
   additionalParams?: URLSearchParams,
 ) => {
   const params = new URLSearchParams(additionalParams || []);

@@ -20,13 +20,13 @@ export const abstractMeasurementStyleFlow: StyleFlow = (measurement) => {
 export const temperatureMeasurementStyleFlow: StyleFlow = (measurement) => {
   const temperatureMeasurement = measurement;
   // todo change field in view
-  const celcius =
-    temperatureMeasurement.unit === "CELCIUS"
+  const celsius =
+    temperatureMeasurement.unit === "CELSIUS"
       ? (temperatureMeasurement as unknown as { temp_c: number }).temp_c
       : FtoC((temperatureMeasurement as unknown as { temp_c: number }).temp_c);
 
   return {
-    color: interpolateTemperatureToRGB(celcius),
+    color: interpolateTemperatureToRGB(celsius),
     opacity: 0.5,
     height: 10,
   };

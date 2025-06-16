@@ -56,7 +56,6 @@ export const CreateMeasurementForm: FC<CreateMeasurementFormProps> = (
     } as never as Omit<CreateMeasurementRequestPayloadWithTemporalId, "area">);
   };
 
-  // todo: fix date
   return (
     <Stack>
       <Typography variant="h5">Create buffered measurement</Typography>
@@ -66,6 +65,7 @@ export const CreateMeasurementForm: FC<CreateMeasurementFormProps> = (
           display: "flex",
           flexDirection: "column",
           gap: "8px",
+          width: "500px",
         }}
         onSubmit={handleSubmit(onSubmit)}
       >

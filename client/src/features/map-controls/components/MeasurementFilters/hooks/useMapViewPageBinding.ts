@@ -39,7 +39,6 @@ export const useMapViewPageBinding = () => {
   const handleFilterChange = (_: never, value: FiltersObjectChangePayload) => {
     const { lookupType = "area", ...searchParams } = value;
     const sp = new URLSearchParams(searchParams as Record<string, string>);
-
     const updateDTO: UpdateStateDTO = {
       sp,
       lookupType: lookupType as "area" | "pagination",

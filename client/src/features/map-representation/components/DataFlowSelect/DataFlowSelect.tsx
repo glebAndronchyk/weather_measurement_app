@@ -14,6 +14,7 @@ type DataFlowSelectProps = Omit<
 >;
 
 export const DataFlowSelect: FC<DataFlowSelectProps> = (props) => {
+  const { sx, ...restProps } = props;
   const { updateViewModelState, state } = useMeasurementMapViewModel();
 
   const items: SelectValue<string>[] = Object.values(
@@ -36,12 +37,16 @@ export const DataFlowSelect: FC<DataFlowSelectProps> = (props) => {
 
   return (
     <Select
-      {...props}
+      {...restProps}
       variant="filled"
       value={state.dataFlow}
       defaultValue={state.dataFlow}
       onChange={handleChange}
       items={items}
+      sx={{
+        ...sx,
+        bgcolor: "white",
+      }}
     />
   );
 };

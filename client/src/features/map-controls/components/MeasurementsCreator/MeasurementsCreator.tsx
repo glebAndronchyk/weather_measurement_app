@@ -2,7 +2,7 @@ import { SectionAccordion } from "../SectionAccordion";
 import { useMapControlsViewModel } from "../../viewmodel";
 import { useMapViewPageViewModel } from "../../../../app/routing/pages/MapViewPage/viewmodel";
 import { CreateMeasurementModalTrigger } from "../../../measurements";
-import { Button } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import type { CreateMeasurementRequestPayloadWithTemporalId } from "../../../../app/api/types/CreateMeasurementRequestPayload.ts";
 import { useDrawerModeToggle } from "./hooks/useDrawerModeToggle.ts";
 import { useAlignMeasurementPolygon } from "./hooks/useAlignMeasurementPolygon.ts";
@@ -45,15 +45,19 @@ export const MeasurementsCreator = () => {
 
   return (
     <SectionAccordion title="Measurements creator">
-      {measurementsBuffer.hasEntries && <MeasurementBufferDataGrid />}
-      <CreateMeasurementModalTrigger
-        disabled={measurementsBuffer.isSomethingCreating}
-        onCreateMeasurementEntry={handleMeasurementCreation}
-      />
-      {measurementsBuffer.hasEntries &&
-        !measurementsBuffer.isSomethingCreating && (
-          <Button onClick={handleSave}>Save</Button>
-        )}
+      <Stack gap={4}>
+        {measurementsBuffer.hasEntries && <MeasurementBufferDataGrid />}
+        <Box>
+          <CreateMeasurementModalTrigger
+            disabled={measurementsBuffer.isSomethingCreating}
+            onCreateMeasurementEntry={handleMeasurementCreation}
+          />
+          {measurementsBuffer.hasEntries &&
+            !measurementsBuffer.isSomethingCreating && (
+              <Button onClick={handleSave}>Save</Button>
+            )}
+        </Box>
+      </Stack>
     </SectionAccordion>
   );
 };

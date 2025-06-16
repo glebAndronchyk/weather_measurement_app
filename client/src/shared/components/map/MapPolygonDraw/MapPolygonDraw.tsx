@@ -55,7 +55,6 @@ export const MapPolygonDraw = (props: MapPolygonDraw) => {
         layer.deleteAll();
       },
       changeMode(mode: string, options?: object) {
-        console.log(layer);
         layer.changeMode(mode, options);
       },
       getAll() {

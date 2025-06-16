@@ -1,21 +1,16 @@
-import type { UseMutationResult } from "@tanstack/react-query";
+import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
 import type { FrustumMeasurementQueryPayload } from "../../../../api/types/FrustumMeasurementQueryPayload.ts";
 import type { AreaMeasurements } from "../../../../api/fetchers/getAreaLocation.ts";
-import type { MeasurementQueryPayloadSupertype } from "../../../../api/types/MeasurementQueryPayloadSupertype.ts";
 import type { PaginatedMeasurements } from "../../../../api/fetchers/getPaginatedLocation.ts";
 import type { RefObject } from "react";
+import type { MeasurementQueryPayloadSupertype } from "../../../../api/types/MeasurementQueryPayloadSupertype.ts";
 
 export interface MapViewPageViewModelContextSignature {
-  paginatedMeasurementsQuery: UseMutationResult<
-    PaginatedMeasurements,
-    any,
-    MeasurementQueryPayloadSupertype
+  paginatedMeasurementsQuery: UseQueryResult<
+    PaginatedMeasurements | undefined,
+    any
   >;
-  measurementsQuery: UseMutationResult<
-    AreaMeasurements,
-    any,
-    FrustumMeasurementQueryPayload
-  >;
+  measurementsQuery: UseQueryResult<AreaMeasurements | undefined, any>;
   devicesQuery: UseMutationResult<
     AreaMeasurements,
     any,
@@ -27,6 +22,9 @@ export interface MapViewPageViewModelContextSignature {
     FrustumMeasurementQueryPayload
   >;
 
+  setMeasurementsDynamicParams: (
+    payload: MeasurementQueryPayloadSupertype,
+  ) => void;
   measurementsDrawLayerReference: RefObject<DrawLayerControls | null>;
   mapEventBus: EventTarget;
 

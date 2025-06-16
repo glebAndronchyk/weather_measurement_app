@@ -9,7 +9,7 @@ import { UNITS } from "../../../../../shared/constants/UNITS.ts";
 
 export const UnitSelectorFilter: GenericFilterComponent = (props) => {
   const { onChange } = props;
-  const [controlledValue, setControlledValue] = useState<string>(UNITS.CELCIUS);
+  const [controlledValue, setControlledValue] = useState<string>(UNITS.CELSIUS);
 
   const handleChange = (
     _: SelectChangeEvent<SelectValue<string>>,

@@ -1,0 +1,8 @@
+.mapboxgl-control-container {
+    display: none !important;
+}
+
+.GLOBAL_canvas_edit_highlight {
+    border: 2px solid lightgreen !important;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+}

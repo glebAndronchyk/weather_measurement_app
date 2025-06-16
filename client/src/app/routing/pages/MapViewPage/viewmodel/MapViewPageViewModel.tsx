@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getAreaLocation } from "../../../../api/fetchers/getAreaLocation.ts";
 import type { FrustumMeasurementQueryPayload } from "../../../../api/types/FrustumMeasurementQueryPayload.ts";
 import { getPaginatedLocation } from "../../../../api/fetchers/getPaginatedLocation.ts";
@@ -24,19 +24,33 @@ export const MapViewPageViewModelProvider: FC<PropsWithChildren> = (props) => {
     measurementsFilter: new URLSearchParams(),
     measurementsLookupType: "area",
   });
+
+  const [measurementsDynamicParams, setMeasurementsDynamicParams] =
+    useState<MeasurementQueryPayloadSupertype>();
+
   const measurementsDrawLayerReference = useRef<DrawLayerControls | null>(null);
   const mapEventBus = useMemo(() => new EventTarget(), []);
 
-  const measurementsQuery = useMutation({
-    mutationKey: ["measurements"],
-    mutationFn: (params: FrustumMeasurementQueryPayload) =>
-      getAreaLocation(params, _queriesPayload.measurementsFilter),
+  const measurementsQuery = useQuery({
+    queryKey: ["measurements", measurementsDynamicParams],
+    queryFn: () =>
+      measurementsDynamicParams &&
+      getAreaLocation(
+        measurementsDynamicParams,
+        _queriesPayload.measurementsFilter,
+      ),
+    enabled: _queriesPayload.measurementsLookupType === "area",
   });
 
-  const paginatedMeasurementsQuery = useMutation({
-    mutationKey: ["paginatedMeasurements"],
-    mutationFn: (params: MeasurementQueryPayloadSupertype) =>
-      getPaginatedLocation(params, _queriesPayload.measurementsFilter),
+  const paginatedMeasurementsQuery = useQuery({
+    queryKey: ["paginatedMeasurements", measurementsDynamicParams],
+    queryFn: () =>
+      measurementsDynamicParams &&
+      getPaginatedLocation(
+        measurementsDynamicParams,
+        _queriesPayload.measurementsFilter,
+      ),
+    enabled: _queriesPayload.measurementsLookupType === "pagination",
   });
 
   const devicesQuery = useMutation({
@@ -76,6 +90,7 @@ export const MapViewPageViewModelProvider: FC<PropsWithChildren> = (props) => {
   return (
     <MapViewPageViewModelContext.Provider
       value={{
+        setMeasurementsDynamicParams,
         measurementsDrawLayerReference,
         paginatedMeasurementsQuery,
         measurementsQuery,

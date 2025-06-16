@@ -19,10 +19,10 @@ export const GenericFilters = (props) => {
   };
 
   return (
-    <Stack>
+    <Stack gap={2}>
       {filters.map((filter) => (
         <Box key={filter.id}>
-          <Box>{filter.label}</Box>
+          <Box marginBottom="12px">{filter.label}</Box>
           <Box>
             <filter.component
               onMultiKeyChange={handleMultiKeyChange}

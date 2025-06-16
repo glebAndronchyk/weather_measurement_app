@@ -5,7 +5,7 @@ export const usePagination = (args?: {
   defaultPageSize?: number;
   startPage?: number;
 }) => {
-  const { defaultPageSize = 10, startPage = 0 } = args || {};
+  const { defaultPageSize = 5, startPage = 0 } = args || {};
 
   const [pageNumber, setPageNumber] = useState(startPage);
   const [pageSize, setPageSize] = useState(defaultPageSize);

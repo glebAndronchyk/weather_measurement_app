@@ -4,6 +4,7 @@ import { Box, Stack, TextField } from "@mui/material";
 import type { Coordinates } from "../../../../../shared/types/Coordinates.ts";
 import { PointInput } from "../../../../../shared/components/PointInput/index.ts";
 import { rem } from "../../../../../lib/css/rem.ts";
+import { km_to_m } from "../../../../../lib/math/phys";
 
 export const CoordinatesFilter: GenericFilterComponent = (props) => {
   const { onMultiKeyChange } = props;
@@ -11,7 +12,7 @@ export const CoordinatesFilter: GenericFilterComponent = (props) => {
     within: number | null;
     coordinates: Coordinates<string> | null;
   }>({
-    within: null,
+    within: 20,
     coordinates: null,
   });
 
@@ -24,7 +25,7 @@ export const CoordinatesFilter: GenericFilterComponent = (props) => {
     ) {
       onMultiKeyChange(null as never, [
         {
-          value: controlledValue.within,
+          value: km_to_m(controlledValue.within),
           key: "within",
         },
         {
@@ -60,8 +61,8 @@ export const CoordinatesFilter: GenericFilterComponent = (props) => {
         <TextField
           fullWidth
           type="number"
-          label="Meters within point"
-          value={controlledValue.within || ""}
+          label="Kilometers within point"
+          value={controlledValue.within || 0}
           onChange={handleWithinValueChange}
         />
       </Box>

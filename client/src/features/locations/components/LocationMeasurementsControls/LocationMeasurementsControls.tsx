@@ -5,7 +5,7 @@ import {
   ToggleButtonGroup,
   Typography,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, type GridPaginationModel } from "@mui/x-data-grid";
 import { type ChangeEvent, type FC, type MouseEvent } from "react";
 import {
   objectToColumnDefinition,
@@ -43,7 +43,7 @@ export const LocationMeasurementsControls: FC<
     controls: { onPaginationModelChange },
   } = usePagination();
 
-  const { hasData, measurementsQuery } = useLocationMeasurements({
+  const { measurementsQuery } = useLocationMeasurements({
     take,
     lookupType,
     selectedLocation,
@@ -63,6 +63,15 @@ export const LocationMeasurementsControls: FC<
 
   const handleWithinChange = (e: ChangeEvent<HTMLInputElement>) => {
     onWithinChange(km_to_m(Number(e.target.value)));
+    onPaginationModelChange({
+      page: 0,
+      pageSize: model.pageSize,
+    });
+  };
+
+  const handlePaginationModelChange = (model: GridPaginationModel) => {
+    if (measurementsQuery.isLoading) return;
+    onPaginationModelChange(model);
   };
 
   const columns = objectToColumnDefinition(
@@ -88,16 +97,19 @@ export const LocationMeasurementsControls: FC<
           value={m_to_km(lookupWithin)}
         />
       </Stack>
-      {hasData && selectedLocation && (
+      {selectedLocation && (
         <DataGrid
-          loading={measurementsQuery.isPending}
+          loading={measurementsQuery.isLoading}
           paginationMode="server"
           pageSizeOptions={[5, 10, 25]}
           paginationModel={model}
-          onPaginationModelChange={onPaginationModelChange}
+          onPaginationModelChange={handlePaginationModelChange}
           columns={columns}
           rows={data?.items || []}
           rowCount={data?.totalItems || 0}
+          sx={{
+            minHeight: "371px",
+          }}
         />
       )}
     </Stack>

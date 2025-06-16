@@ -11,7 +11,12 @@ export const SectionAccordion: FC<SectionAccordionProps> = (props) => {
   const { title, children } = props;
 
   return (
-    <Accordion>
+    <Accordion
+      elevation={0}
+      sx={(theme) => ({
+        border: `1px solid ${theme.palette.grey[400]}`,
+      })}
+    >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         {title}
       </AccordionSummary>
