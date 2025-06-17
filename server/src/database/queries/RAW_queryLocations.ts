@@ -7,10 +7,10 @@ const locationsQueryMapper: Parameters<typeof whereIncluded<LocationsFilteringQu
     // todo: add lookup index
     search: (val) => `
                 (
-                    metadata->>'name' LIKE '%${val}%' OR
-                    metadata->>'description' LIKE '%${val}%' OR
-                    metadata->>'region' LIKE '%${val}%' OR
-                    metadata->>'country' LIKE '%${val}%'
+                    metadata->>'name' ilike '%${val}%' OR
+                    metadata->>'description' ilike '%${val}%' OR
+                    metadata->>'region' ilike '%${val}%' OR
+                    metadata->>'country' ilike '%${val}%'
                 )
             `,
     ltc: (val, { rbc }, initialTableAlias) =>
