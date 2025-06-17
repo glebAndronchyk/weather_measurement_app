@@ -68,7 +68,7 @@ model spatial_ref_sys {
 }
 
 model AirQualityMeasurement {
-  id               Int                     @id
+  id               Int                     @id @default(autoincrement())
   device_id        Int
   timestamp        DateTime                @db.Date
   area             Unsupported("geometry")
@@ -83,7 +83,7 @@ model AirQualityMeasurement {
 }
 
 model AtmosphericPressureMeasurement {
-  id               Int                     @id
+  id               Int                     @id @default(autoincrement())
   device_id        Int
   timestamp        DateTime                @db.Date
   area             Unsupported("geometry")
@@ -95,7 +95,7 @@ model AtmosphericPressureMeasurement {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model CloudCovertMeasurement {
-  id               Int                     @id
+  id               Int                     @id @default(autoincrement())
   device_id        Int
   timestamp        DateTime                @db.Date
   area             Unsupported("geometry")
