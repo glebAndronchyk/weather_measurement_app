@@ -19,8 +19,8 @@ const MapViewPage = () => {
             mapState={{
               projection: "globe",
               initialViewState: {
-                longitude: 10,
-                latitude: 10,
+                longitude: 39.659043,
+                latitude: 48.065715,
                 zoom: 12,
                 pitch: 60,
               },
