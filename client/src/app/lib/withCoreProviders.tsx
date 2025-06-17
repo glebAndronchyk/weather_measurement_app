@@ -5,7 +5,7 @@ import { APPThemeProvider } from "../theme/APPThemeProvider";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 
 export const withCoreProviders = (Comp: FC<any>): FC<any> => {
-  return (...props: any[]) => (
+  return (props: any) => (
     <QueryClientProvider>
       <APPThemeProvider>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
